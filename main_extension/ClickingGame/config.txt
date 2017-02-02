@@ -1,0 +1,3 @@
+Name=ClickingGame
+Need=App
+Autorun=true
