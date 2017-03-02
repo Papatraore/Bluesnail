@@ -1,6 +1,6 @@
-package com.alma.app;
+package com.alma.platform;
 
-public class Loader {
+public class PluginLoader {
 
 	//public List<Description>
 	

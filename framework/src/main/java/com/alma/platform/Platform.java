@@ -1,10 +1,10 @@
-package com.alma.app;
+package com.alma.platform;
 
 /**
  * Run the framework and load an application give by user.
  * 
  */
-public class App 
+public class Platform 
 {
     public static void main( String[] args )
     {
