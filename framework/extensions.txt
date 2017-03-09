@@ -1,0 +1,1 @@
+name=app;class=com.alma.app;interface=com.alma.app;directory=main_extension/rogerRunner/target/classes/
