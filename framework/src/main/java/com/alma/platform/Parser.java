@@ -25,32 +25,31 @@ public class Parser {
      */
 	public Map<String, Plugin> parseFile(String formatFichier) throws IOException {
         
-		String aLine;
+		String line;
         FileReader fileReader = new FileReader(formatFichier);
 		BufferedReader reader = new BufferedReader(fileReader);
 
-        Map<String, Plugin> res = new HashMap<>();
+        Map<String, Plugin> result = new HashMap<>();
 
         while (reader.ready()) {
             Properties properties = new Properties();
             Plugin plug = new Plugin();
-            aLine = reader.readLine();
+            line = reader.readLine();
 
-			String[] OneAttributeOneValue = aLine.split(";");
+			String[] OneAttributeOneValue = line.split(";");
             for(int c = 0; c < OneAttributeOneValue.length; c++){
 				String[] property = OneAttributeOneValue[c].split("=");
                 properties.setProperty(property[0], property[1]);
             }
-            isValidated(properties);
 			plug.setProperties(properties);
-            res.put(plug.getProperties().getProperty("name"), plug);
+            result.put(plug.getProperties().getProperty("name"), plug);
 		}
 		reader.close();
-		return res;
+		return result;
 	}
 
     /**
-     * loding the configuration file of the platform
+     * loading the configuration file of the platform
      * @param filename
      * @return
      * @throws IOException

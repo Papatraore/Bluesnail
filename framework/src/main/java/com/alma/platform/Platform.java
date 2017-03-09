@@ -29,7 +29,7 @@ public class Platform {
         Parser parser = new Parser();
 
         try {
-            plugins = parser.parseFile("src/main/resources/extensions.txt");
+            plugins = parser.parseFile("extensions.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,7 +41,7 @@ public class Platform {
 
         // on charge la config de la plateforme
         try {
-            config = parser.loadConfig("src/main/resources/config.properties");
+            config = parser.loadConfig("");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,7 +67,7 @@ public class Platform {
      * Methode qui retourne l'instance de la plateforme
      * @return
      * @throws MalformedURLException
-     * @throws PropertyNotFoundException
+     * @throws MissingPropertyParser
      */
     public static Platform getInstance() throws MalformedURLException, MissingPropertyParser {
         if(instance == null) {
@@ -88,7 +88,7 @@ public class Platform {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    public Object getExtension(String extension_name) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSavedInstanceException {
+    public Object getExtension(String extension_name) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Plugin plugin = plugins.get(extension_name);
         Object objet = extensionFactory.get(plugin.getClassName(), classLoader);
         monitor.reportNewInstance(extension_name, plugin.getClassName() + "#" + System.identityHashCode(objet));
@@ -96,7 +96,7 @@ public class Platform {
     }
 
     /**
-     * Methode qui retourne une liste des noms des extensions a  lancer au demarrage de l'application
+     * Methode qui retourne une liste des noms des extensions aï¿½ lancer au demarrage de l'application
      * @return
      */
     public List<String> getAutorunExtensions() {
@@ -133,7 +133,7 @@ public class Platform {
                 try {
                     Platform.getInstance().getExtension(plugin_name);
                 } catch (Exception e) {
-                    Monitor.getInstance().addLog(new Log(LogLevel.CRITICAL, e.getClass().getName(), e.toString()));
+                   // Monitor.getInstance().addLog(new Log(LogLevel.CRITICAL, e.getClass().getName(), e.toString()));
                 }
             }
         } catch (MalformedURLException | MissingPropertyParser e) {
