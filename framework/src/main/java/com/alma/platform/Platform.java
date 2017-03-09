@@ -1,7 +1,7 @@
 package com.alma.platform;
 
 
-import com.alma.platform.MissingPropertyParser;
+import com.alma.platform.MissingPropertyException;
 import com.alma.factory.*;
 import com.alma.monitor.*;
 import com.alma.plugin.Plugin;
@@ -69,7 +69,7 @@ public class Platform {
      * @throws MalformedURLException
      * @throws PropertyNotFoundException
      */
-    public static Platform getInstance() throws MalformedURLException, MissingPropertyParser {
+    public static Platform getInstance() throws MalformedURLException, MissingPropertyException {
         if(instance == null) {
             synchronized (Platform.class) {
                 if(instance == null) {
@@ -136,7 +136,7 @@ public class Platform {
                     Monitor.getInstance().addLog(new Log(LogLevel.CRITICAL, e.getClass().getName(), e.toString()));
                 }
             }
-        } catch (MalformedURLException | MissingPropertyParser e) {
+        } catch (MalformedURLException | MissingPropertyException e) {
             e.printStackTrace();
         }
     }
