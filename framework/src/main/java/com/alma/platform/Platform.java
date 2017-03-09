@@ -1,17 +1,10 @@
 package com.alma.platform;
 
-import com.alma.platform.backup.BackupManager;
-import com.alma.platform.exceptions.NoSavedInstanceException;
-import com.alma.platform.exceptions.PropertyNotFoundException;
-import com.alma.platform.factories.ClassicFactory;
-import com.alma.platform.factories.FailureSafeFactory;
-import com.alma.platform.factories.IFactory;
-import com.alma.platform.factories.MonitorProxyFactory;
-import com.alma.platform.monitor.Log;
-import com.alma.platform.monitor.LogLevel;
-import com.alma.platform.monitor.Monitor;
-import com.alma.platform.plugins.Plugin;
-import com.alma.platform.proxies.IMonitorProxy;
+
+import com.alma.platform.MissingPropertyParser;
+import com.alma.factory.*;
+import com.alma.monitor.*;
+import com.alma.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,31 +12,29 @@ import java.net.*;
 import java.util.*;
 
 /**
- * Classe singleton représentant une plateforme de plugins
+ * Classe singleton representant une plateforme de plugins
  */
 public class Platform {
 
     private static Platform instance;
     private Properties config;
     private Monitor monitor;
-    private BackupManager backupsManager;
     private URLClassLoader classLoader;
     private Map<String, Plugin> plugins;
     private IFactory extensionFactory;
 
-    private Platform() throws MalformedURLException, PropertyNotFoundException {
-        extensionFactory = new ClassicFactory();
-        backupsManager = new BackupManager();
+    private Platform() throws MalformedURLException {
+        extensionFactory = new Factory();
         monitor = Monitor.getInstance();
         Parser parser = new Parser();
 
         try {
-            plugins = parser.parseIt("src/main/resources/extensions.txt");
+            plugins = parser.parseFile("src/main/resources/extensions.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // on enregistre les plugins auprès du monitor
+        // on enregistre les plugins aupre du monitor
         for(Map.Entry<String, Plugin> plugin : plugins.entrySet()) {
             monitor.registerPlugin(plugin.getValue());
         }
@@ -55,7 +46,7 @@ public class Platform {
             e.printStackTrace();
         }
 
-        // génération des urls du class loader
+        // generation des urls du class loader
         int i = 0;
         File current_directory = new File(System.getProperty("user.dir"));
         String classpath_prefix = current_directory.getParentFile().toString() + "/";
@@ -67,31 +58,18 @@ public class Platform {
         }
         classLoader = URLClassLoader.newInstance(urls);
 
-        // en fonction du niveau de log, on utilise la factory appropriée
-        int log_level = Integer.parseInt(config.getProperty("log-level"));
-        switch (log_level) {
-            case 0 :
-                extensionFactory = new ClassicFactory();
-                break;
-            case 1 :
-                extensionFactory = new MonitorProxyFactory();
-                break;
-            case 2 :
-                extensionFactory = new FailureSafeFactory(backupsManager);
-                break;
-            default:
-                extensionFactory = new ClassicFactory();
-                break;
-        }
+
+        extensionFactory = new Factory();
+
     }
 
     /**
-     * Méthode qui retourne l'instance de la plateforme
+     * Methode qui retourne l'instance de la plateforme
      * @return
      * @throws MalformedURLException
      * @throws PropertyNotFoundException
      */
-    public static Platform getInstance() throws MalformedURLException, PropertyNotFoundException {
+    public static Platform getInstance() throws MalformedURLException, MissingPropertyParser {
         if(instance == null) {
             synchronized (Platform.class) {
                 if(instance == null) {
@@ -103,8 +81,8 @@ public class Platform {
     }
 
     /**
-     * Méthoide qui charge et retourne une extension précise
-     * @param extension_name Le nom de l'extension que l'on veut récupérer
+     * Methode qui charge et retourne une extension precise
+     * @param extension_name Le nom de l'extension que l'on veut recuperer
      * @return
      * @throws ClassNotFoundException
      * @throws IllegalAccessException
@@ -114,14 +92,11 @@ public class Platform {
         Plugin plugin = plugins.get(extension_name);
         Object objet = extensionFactory.get(plugin.getClassName(), classLoader);
         monitor.reportNewInstance(extension_name, plugin.getClassName() + "#" + System.identityHashCode(objet));
-        if(extensionFactory instanceof MonitorProxyFactory) {
-            ((IMonitorProxy) objet).setExtensionName(extension_name);
-        }
         return objet;
     }
 
     /**
-     * Méthode qui retourne une liste des noms des extensions à lancer au démarrage de l'application
+     * Methode qui retourne une liste des noms des extensions a� lancer au demarrage de l'application
      * @return
      */
     public List<String> getAutorunExtensions() {
@@ -137,7 +112,7 @@ public class Platform {
     }
 
     /**
-     * Méthode qui retourne une liste des noms des extensions implémentant une interface donnée
+     * Methode qui retourne une liste des noms des extensions implementant une interface donnee
      * @param interface_name
      * @return
      */
@@ -161,7 +136,7 @@ public class Platform {
                     Monitor.getInstance().addLog(new Log(LogLevel.CRITICAL, e.getClass().getName(), e.toString()));
                 }
             }
-        } catch (MalformedURLException | PropertyNotFoundException e) {
+        } catch (MalformedURLException | MissingPropertyParser e) {
             e.printStackTrace();
         }
     }
