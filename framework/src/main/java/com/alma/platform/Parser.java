@@ -50,7 +50,7 @@ public class Parser {
 	}
 
     /**
-     * Méthode qui charge un fichier de config de la plateforme
+     * loding the configuration file of the platform
      * @param filename
      * @return
      * @throws IOException
@@ -62,28 +62,4 @@ public class Parser {
         return config;
     }
 
-    /**
-     * Méthode qui assure si un ensemble de propriété contient les propriétés obligatoires
-     * @param properties
-     * @return
-     */
-    private boolean isValidated(Properties properties) throws PropertyNotFoundException {
-        if(! properties.containsKey("name")) {
-            throw new PropertyNotFoundException("Property not found : name");
-        }
-
-        if(! properties.containsKey("class")) {
-            throw new PropertyNotFoundException("Property not found : class");
-        }
-
-        if(! properties.containsKey("interface")) {
-            throw new PropertyNotFoundException("Property not found : interface");
-        }
-
-        if(! properties.containsKey("directory")) {
-            throw new PropertyNotFoundException("Property not found : directory");
-        }
-
-        return true;
-    }
 }
