@@ -8,6 +8,17 @@ public class PluginDescriptor {
 	private String directoryPath;
 	private boolean autorun;
 	
+	/**
+	 * @brief Default constructor, initialize all attributes to their default value. 
+	 */
+	public PluginDescriptor() {
+		this.name = null;
+		this.className = null;
+		this.interfaceName = null;
+		this.directoryPath = null;
+		this.autorun = false;
+	}
+	
 	public String getName() {
 		return name;
 	}

@@ -1,8 +1,10 @@
 package com.alma.platform;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Platform {
 
@@ -10,10 +12,9 @@ public class Platform {
 	private Parser parser;
 	private List<PluginDescriptor> pluginDescriptor;
 
-	public Platform() throws IOException {
+	public Platform() throws IOException, NoSuchElementException, IllegalArgumentException {
 		monitor = new Monitor();
 		parser = new Parser();
-		pluginDescriptor = new ArrayList<PluginDescriptor>();
 
 		// Parse of extensions file
 		pluginDescriptor = parser.parseFile("extensions.txt");
@@ -22,7 +23,7 @@ public class Platform {
 
 	}
 
-	public List<PluginDescriptor> getPluginDescriptorFor(Class<?> need) {
+	public List<PluginDescriptor> getPluginDescriptor(Class<?> need) {
 
 		List<PluginDescriptor> result = new ArrayList<PluginDescriptor>();
 
@@ -35,12 +36,12 @@ public class Platform {
 		return result;
 	}
 
-	public List<PluginDescriptor> getAutorunExtension() {
+	public List<PluginDescriptor> getAutorunPlugin() {
 
 		List<PluginDescriptor> result = new ArrayList<PluginDescriptor>();
 
 		for (PluginDescriptor plugin : pluginDescriptor) {
-			if (plugin.isAutorun()) {
+			if (plugin.isAutorun() && plugin.getInterfaceName().equals("IMainPlugin")) {
 				result.add(plugin);
 			}
 		}
@@ -48,18 +49,23 @@ public class Platform {
 		return result;
 	}
 
-	public Object getExtension(String mainClassName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		return Class.forName(mainClassName).newInstance();
+	public Object getPluginInstance(String className) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		return Class.forName(className).newInstance();
 	}
 
 	public static void main(String[] args) {
-		Platform platform;
+		Platform platform = null;
+		Method run = null;
+		
 		try {
 			platform = new Platform();
 
-			for (PluginDescriptor plugin : platform.getAutorunExtension()) {
+			for (PluginDescriptor plugin : platform.getAutorunPlugin()) {
 				try {
-					platform.getExtension(plugin.getClassName());
+					Object obj = platform.getPluginInstance(plugin.getClassName());
+					run = obj.getClass().getMethod("");
+					
+					
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				} catch (InstantiationException e) {
@@ -70,6 +76,10 @@ public class Platform {
 			}
 			
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NoSuchElementException e){
+			e.printStackTrace();
+		} catch (IllegalArgumentException e){
 			e.printStackTrace();
 		}
 	}
