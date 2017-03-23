@@ -63,9 +63,9 @@ public class Parser {
 	}
 	
 	private boolean checkPlugin(PluginDescriptor plugin){		
-		return plugin.getName() == null 
-				|| plugin.getClassName() == null 
-				|| plugin.getInterfaceName() == null 
-				|| plugin.getDirectoryPath() == null;
+		return plugin.getName() != null 
+				&& plugin.getClassName() != null 
+				&& plugin.getInterfaceName() != null 
+				&& plugin.getDirectoryPath() != null;
 	}
 }

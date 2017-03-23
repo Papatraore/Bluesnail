@@ -1,1 +1,1 @@
-name=app;class=com.alma.app.App;interface=com.alma.platform.IMainPlugin;directory=main_extension/rogerRunner/target/classes/;autorun=true
+name=app;class=com.alma.app.App;interface=com.alma.platform.IMainPlugin;directory=../main_extension/pluginTest/target/classes/;autorun=true
