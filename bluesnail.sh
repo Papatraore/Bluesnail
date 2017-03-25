@@ -49,7 +49,7 @@ install_platform()
 create_plugin()
 {
 	
-	mvn archetype:generate -DarchetypeArtifactId=maven-archetype-quickstart -DgroupId=org.ccm.maven -DartifactId=helloworld -DinteractiveMode=false
+	#mvn archetype:generate -DarchetypeArtifactId=maven-archetype-quickstart -DgroupId=org.ccm.maven -DartifactId=helloworld -DinteractiveMode=false
 }
 
 while getopts ":irc:h:" option
