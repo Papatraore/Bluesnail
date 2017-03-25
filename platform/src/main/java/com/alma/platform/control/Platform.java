@@ -15,7 +15,14 @@ import com.alma.platform.data.PluginParser;
  */
 public class Platform {
 
+	/**
+	 * Class url of the main plugin interface.
+	 */
 	public static final String I_MAIN_PLUGIN_PATH = "com.alma.platform.data.IMainPlugin";
+
+	/*
+	 * Instance of the platform
+	 */
 	private static Platform INSTANCE;
 
 	// Monitoring of platform
@@ -33,7 +40,7 @@ public class Platform {
 	// --- CONSTRUCTOR
 
 	/**
-	 * Creates a unique instance of a Platform using the singleton pattern.
+	 * Creates an instance of a Platform using the singleton pattern.
 	 * 
 	 * @throws IOException
 	 * @throws NoSuchElementException
@@ -49,8 +56,10 @@ public class Platform {
 		String userDirUrl[] = System.getProperty("user.dir").split("/");
 		int cpt = 0;
 
-		// Get and treats the absolute path of the plugin directory to create
-		// the ClassLoader
+		/*
+		 * Get and treats the absolute path of the plugin directory to create
+		 * the ClassLoader
+		 */
 
 		for (PluginDescriptor plugin : pluginDescriptor) {
 
@@ -176,7 +185,9 @@ public class Platform {
 
 	/**
 	 * Returns an instance of a plugin.
-	 * @param className The name of the plugin.
+	 * 
+	 * @param className
+	 *            The name of the plugin.
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException

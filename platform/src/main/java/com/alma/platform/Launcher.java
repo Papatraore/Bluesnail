@@ -1,36 +1,24 @@
 package com.alma.platform;
 
-import java.lang.reflect.Method;
-
 import com.alma.platform.control.Platform;
+import com.alma.platform.data.IMainPlugin;
 import com.alma.platform.data.PluginDescriptor;
 
 /**
- * Main class of the platform.
+ * Main class of the platform. Run all existing autorun plugin.
  */
 public class Launcher {
 
 	public static void main(String[] args) {
-		Platform platform = null;
-		Method run = null;
-
 		try {
-			platform = Platform.getInstance();
+			Platform platform = Platform.getInstance();
 
+			// Starting each plugin in autorun mode
 			for (PluginDescriptor plugin : platform.getAutorunPlugin()) {
-				try {
-					// IMainPlugin obj = (IMainPlugin)
-					// platform.getPluginInstance(plugin.getClassName());
-					// obj.run();
+				IMainPlugin mainPlugin = (IMainPlugin) platform.getPluginInstance(plugin.getClassName());
+				platform.getPluginInstance(plugin.getClassName());
+				mainPlugin.run();
 
-					Object obj = platform.getPluginInstance(plugin.getClassName());
-
-					run = obj.getClass().getMethod("run");
-					run.invoke(obj);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
 
 		} catch (Exception e) {
