@@ -11,10 +11,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.alma.platform</groupId>
-			<artifactId>bluesnail</artifactId>
+			<artifactId>bluesnail-platform</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
-			<systemPath>${basedir}/../../framework/target/bluesnail-1.0.jar</systemPath>
+			<systemPath>${basedir}/../../platform/target/bluesnail-platform-1.0-SNAPSHOT.jar</systemPath>
 		</dependency>
 	</dependencies>
 </project>

@@ -1,6 +1,6 @@
 package com.alma.app;
 
-import com.alma.platform.IMainPlugin;
+import com.alma.platform.data.IMainPlugin;
 
 public class App implements IMainPlugin {
 
