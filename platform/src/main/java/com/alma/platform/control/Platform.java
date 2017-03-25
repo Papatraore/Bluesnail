@@ -11,7 +11,8 @@ import com.alma.platform.data.PluginDescriptor;
 import com.alma.platform.data.PluginParser;
 
 /**
- * 
+ * This class represents the BlueSnail platform and is used to manage the
+ * different applications/plugin created by user.
  */
 public class Platform {
 
@@ -196,7 +197,7 @@ public class Platform {
 	public Object getPluginInstance(String className)
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-		return classLoader.loadClass(className).newInstance();
+		return Class.forName(className, true, classLoader);
 	}
 
 }

@@ -1,1 +1,1 @@
-name=app;class=com.alma.app.App;interface=com.alma.platform.data.IMainPlugin;directory=application/pluginTest/target/classes/;autorun=true
+name=app;class=com.alma.app.App;interface=com.alma.platform.data.IMainPlugin;directory=applications/pluginTest/target/classes/;autorun=true
