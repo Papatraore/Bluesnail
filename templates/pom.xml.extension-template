@@ -3,12 +3,12 @@
 	
 	<!-- 
 		Replace APP_NAME with the name of the extension
-		Replace PARENT_APP_NAME with the name of the autorun application
-		Replace PARENT_APP_JAR with the name of jar file of the autorun application
+		Replace PARENT_NAME with the name of the autorun application
+		Replace PARENT_JAR with the name of jar file of the autorun application
 	 -->
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.alma.application</groupId>
+	<groupId>com.alma.extension</groupId>
 	<artifactId>APP_NAME</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
@@ -32,11 +32,24 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.alma.application</groupId>
-			<artifactId>PARENT_APP_NAME</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.alma.platform</groupId>
+			<artifactId>bluesnail-platform</artifactId>
 			<version>1.0-SNAPSHOT</version>
 			<scope>system</scope>
-			<systemPath>${basedir}/../../application/target/PARENT_APP_JAR</systemPath>
+			<systemPath>${basedir}/../../platform/target/bluesnail-platform-1.0-SNAPSHOT.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>com.alma.application</groupId>
+			<artifactId>PARENT_NAME</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/../../applications/PARENT_NAME/target/PARENT_JAR</systemPath>
 		</dependency>
 	</dependencies>
 </project>

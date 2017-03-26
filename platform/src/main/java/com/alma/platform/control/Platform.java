@@ -197,7 +197,7 @@ public class Platform {
 	public Object getPluginInstance(String className)
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
-		return Class.forName(className, true, classLoader);
+		return Class.forName(className, true, classLoader).newInstance();
 	}
 
 }
