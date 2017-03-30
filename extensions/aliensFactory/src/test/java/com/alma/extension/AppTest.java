@@ -1,4 +1,4 @@
-package com.alma.app;
+package com.alma.extension;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

@@ -1,4 +1,4 @@
-package com.alma.app;
+package com.alma.extension;
 
 /**
  * Hello world!

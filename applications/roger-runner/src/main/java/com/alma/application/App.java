@@ -62,9 +62,9 @@ public class App extends JFrame implements IMainPlugin {
 		file.add(eMenuItem);
 		menubar.add(file);
 		setJMenuBar(menubar);
-
 		mainPanel.add(new Board());
-		setPreferredSize(new Dimension(1000, 500));
+		setSize(new Dimension(1000, 500));
+                setResizable(false);
 		pack();
 
 		setTitle("Collision");

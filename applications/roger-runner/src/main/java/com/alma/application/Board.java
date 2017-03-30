@@ -31,14 +31,15 @@ public class Board extends JPanel implements ActionListener {
 	private final int B_WIDTH = 1000;
 	private final int B_HEIGHT = 500;
 	private final int DELAY = 15;
-
-	private int[][] pos = new int[B_WIDTH][B_WIDTH];
+        private final int NBR_FIRE = 50;
+          
+	private int[][] pos = new int[NBR_FIRE][NBR_FIRE];
 
 	void initPos() {
 		Random rdm = new Random();
-		for (int i = 0; i < B_WIDTH; i++) {
-			for (int j = 0; j < B_WIDTH; j++) {
-				this.pos[i][j] = rdm.nextInt(2500) + 50;
+		for (int i = 0; i < NBR_FIRE; i++) {
+			for (int j = 0; j < NBR_FIRE; j++) {
+				this.pos[i][j] = rdm.nextInt(1000);
 			}
 		}
 	}
@@ -71,7 +72,8 @@ public class Board extends JPanel implements ActionListener {
 		aliens = new ArrayList<>();
 
 		for (int[] p : pos) {
-			aliens.add(new Alien(p[0], p[1]));
+                        if( (p[1]< 450) &&(p[1]> 50))
+			aliens.add(new Alien(p[0]+500, p[1]));
 		}
 	}
 
@@ -116,10 +118,10 @@ public class Board extends JPanel implements ActionListener {
 	private void drawGameOver(Graphics g) {
 
 		String msg = "Game Over";
-		Font small = new Font("Helvetica", Font.BOLD, 14);
+		Font small = new Font("Helvetica", Font.BOLD, 50);
 		FontMetrics fm = getFontMetrics(small);
 
-		g.setColor(Color.white);
+		g.setColor(Color.red);
 		g.setFont(small);
 		g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2, B_HEIGHT / 2);
 	}
