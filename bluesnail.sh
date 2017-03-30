@@ -27,11 +27,11 @@ usage()
 	echo "Options :"
 
 	echo "	-i"
-	echo "		Install the platform"
+	echo "		Install the platform and compile all existing plugin (applications and extensions)"
 	echo 
 
 	echo "	-r"
-	echo "		Run the platform, if the platform is not installed, install it"
+	echo "		Run the platform, if the platform or a plugin is not installed, install it"
 	echo 
 
 	echo "	-c <plugin_name> [-p <parent_plugin>]"
@@ -46,30 +46,134 @@ usage()
 	exit 0
 }
 
-install_platform()
+install_platform
 {
-	if [ ! -d "${APPLICATIONS_PATH}" ]
-	then
-		echo "[INFO] Create the applications directory"
-		mkdir ${APPLICATIONS_PATH}
-	fi
-
-	if [ ! -d "${EXTENSIONS_PATH}" ]
-	then
-		echo "[INFO] Create the extensions directory"
-		mkdir ${EXTENSIONS_PATH}
-	fi
-
 	cd ${PLATFORM_PATH}
-	mvn package
-
+	
 	echo
-	echo "[INFO] To use this platform, all existing applications and extensions must be compiled using \"mvn package\" "
+	echo "[INFO] CREATION OF PLATFORM JAR..."
+	mvn package
+	
+	if [ ! $? -eq 0 ]; then
+		echo "[ERROR] Failed to install the platform"
+		exit 1
+	fi
+	
+	exit 0
+}
+
+install_application
+{
+	cd ${APPLICATIONS_PATH}	
+	
+	for dir in $(ls)
+	do
+		echo
+		echo "[INFO] CREATION OF \"${dir}\" JAR... "
+		cd ${dir}
+		mvn package
+		
+		if [ ! $? -eq 0 ]; then
+			echo "[ERROR] Failed to install the application \"${dir}\""
+			exit 1
+		fi
+		
+		cd ${APPLICATIONS_PATH}
+	done
+	
+	exit 0
+}
+
+install_extension
+{
+	cd ${EXTENSIONS_PATH}
+	
+	for dir in $(ls)
+	do
+		echo
+		echo "[INFO] CREATION OF \"${dir}\" JAR... "
+		cd ${dir}
+		mvn package
+		
+		if [ ! $? -eq 0 ]; then
+			echo "[ERROR] Failed to install the extension \"${dir}\""
+			exit 1
+		fi
+		
+		cd ${EXTENSIONS_PATH}
+	done
+	
+	exit 0
+}
+
+install_all()
+{		
+	# Creation of platform jar
+	
+	install_platform
+	
+	if [ ! $? -eq 0 ]; then
+		exit 1
+	fi
+
+	# Creation of applications jar
+
+	install_application
+	
+	if [ ! $? -eq 0 ]; then
+		exit 1
+	fi
+	
+	# Creation of extensions jar
+	
+	install_extension
+	
+	if [ ! $? -eq 0 ]; then
+		exit 1
+	fi
 
 	# Add empty line and return to the project path...
 	cd ${PROJECT_PATH}
 	echo
 
+	exit 0
+}
+
+check_install()
+{
+	# Check platform installation
+	
+	if [ ! -f ${PLATFORM_JAR} ] 
+	then
+		install_platform
+		
+		if [ ! $? -eq 0 ]; then
+			exit 1
+		fi
+	fi
+	
+	# Check application installation
+	
+	cd ${APPLICATIONS_PATH}	
+	
+	for dir in $(ls)
+	do
+		
+	done
+	
+	# Check extension installation
+	
+	cd ${EXTENSIONS_PATH}
+	
+	for dir in $(ls)
+	do
+		
+	done
+	
+	# Add empty line and return to the project path...
+	cd ${PROJECT_PATH}
+	echo
+	
 	exit 0
 }
 
@@ -160,13 +264,29 @@ create_plugin()
 	exit 0
 }
 
-# MAIN PROCESS
+####################################
+#          MAIN PROCESS            #
+####################################
 
 # Print usage if no option has been specified
 
 if [ $# -eq 0 ]; then
 	usage
 	exit 1
+fi
+
+# Create directory if they don't exist
+
+if [ ! -d "${APPLICATIONS_PATH}" ]
+then
+	echo "[INFO] Create the applications directory"
+	mkdir ${APPLICATIONS_PATH}
+fi
+
+if [ ! -d "${EXTENSIONS_PATH}" ]
+then
+	echo "[INFO] Create the extensions directory"
+	mkdir ${EXTENSIONS_PATH}
 fi
 
 # Get option (see usage)
@@ -225,7 +345,7 @@ done
 
 if [ -n "${APP_NAME}" ]
 then
-	if [ ! -f ${PLATFORM_JAR} ] || [ ! -d "${APPLICATIONS_PATH}" ] || [ ! -d "${EXTENSIONS_PATH}" ]
+	if [ ! -f ${PLATFORM_JAR} ]
 	then
 		install_platform
 	fi
