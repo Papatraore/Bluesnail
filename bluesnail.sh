@@ -43,10 +43,10 @@ usage()
 	echo "		Print help"
 	echo 
 
-	exit 0
+	exit $1
 }
 
-install_platform
+install_platform()
 {
 	cd ${PLATFORM_PATH}
 	
@@ -58,13 +58,11 @@ install_platform
 		echo "[ERROR] Failed to install the platform"
 		exit 1
 	fi
-	
-	exit 0
 }
 
-install_application
+install_plugin()
 {
-	cd ${APPLICATIONS_PATH}	
+	cd $1
 	
 	for dir in $(ls)
 	do
@@ -74,36 +72,12 @@ install_application
 		mvn package
 		
 		if [ ! $? -eq 0 ]; then
-			echo "[ERROR] Failed to install the application \"${dir}\""
+			echo "[ERROR] Failed to install the plugin \"$1/${dir}\""
 			exit 1
 		fi
 		
-		cd ${APPLICATIONS_PATH}
+		cd $1
 	done
-	
-	exit 0
-}
-
-install_extension
-{
-	cd ${EXTENSIONS_PATH}
-	
-	for dir in $(ls)
-	do
-		echo
-		echo "[INFO] CREATION OF \"${dir}\" JAR... "
-		cd ${dir}
-		mvn package
-		
-		if [ ! $? -eq 0 ]; then
-			echo "[ERROR] Failed to install the extension \"${dir}\""
-			exit 1
-		fi
-		
-		cd ${EXTENSIONS_PATH}
-	done
-	
-	exit 0
 }
 
 install_all()
@@ -111,32 +85,18 @@ install_all()
 	# Creation of platform jar
 	
 	install_platform
-	
-	if [ ! $? -eq 0 ]; then
-		exit 1
-	fi
 
 	# Creation of applications jar
 
-	install_application
-	
-	if [ ! $? -eq 0 ]; then
-		exit 1
-	fi
+	install_plugin "${APPLICATIONS_PATH}"
 	
 	# Creation of extensions jar
 	
-	install_extension
-	
-	if [ ! $? -eq 0 ]; then
-		exit 1
-	fi
+	install_plugin "${EXTENSIONS_PATH}"
 
 	# Add empty line and return to the project path...
 	cd ${PROJECT_PATH}
 	echo
-
-	exit 0
 }
 
 check_install()
@@ -146,10 +106,6 @@ check_install()
 	if [ ! -f ${PLATFORM_JAR} ] 
 	then
 		install_platform
-		
-		if [ ! $? -eq 0 ]; then
-			exit 1
-		fi
 	fi
 	
 	# Check application installation
@@ -158,7 +114,9 @@ check_install()
 	
 	for dir in $(ls)
 	do
-		
+		if [ ! -f "${APPLICATIONS_PATH}/${dir}/target/${dir}-1.0-SNAPSHOT.jar" ]; then
+			install_plugin ${APPLICATIONS_PATH} 
+		fi
 	done
 	
 	# Check extension installation
@@ -167,14 +125,14 @@ check_install()
 	
 	for dir in $(ls)
 	do
-		
+		if [ ! -f "${EXTENSIONS_PATH}/${dir}/target/${dir}-1.0-SNAPSHOT.jar" ]; then
+			install_plugin ${EXTENSIONS_PATH} 
+		fi
 	done
 	
 	# Add empty line and return to the project path...
 	cd ${PROJECT_PATH}
 	echo
-	
-	exit 0
 }
 
 create_plugin()
@@ -260,8 +218,6 @@ create_plugin()
 	# Add empty line and return to the project path...
 	cd ${PROJECT_PATH}
 	echo
-
-	exit 0
 }
 
 ####################################
@@ -271,8 +227,7 @@ create_plugin()
 # Print usage if no option has been specified
 
 if [ $# -eq 0 ]; then
-	usage
-	exit 1
+	usage 1
 fi
 
 # Create directory if they don't exist
@@ -295,16 +250,13 @@ while getopts ":irc:p:h" option
 do
 	case ${option} in
 		i)	
-			install_platform
+			install_all
 
 			exit 0
 			;;
 		
 		r)
-			if [ ! -f ${PLATFORM_JAR} ] 
-			then
-				install_platform
-			fi
+			check_install
 
 			cd ${PLATFORM_PATH}
 			java -jar ${PLATFORM_JAR}
@@ -320,23 +272,17 @@ do
 			PARENT_NAME=${OPTARG}
 			;;
 		h)	
-			usage
-
-			exit 0
+			usage 0
 			;;
 		:)
 			echo "[ERROR] Missing argument for the option -${OPTARG}"
 			echo 
-			usage
-
-			exit 1
+			usage 1
 			;;
 		\?)
 			echo "[ERROR] -${OPTARG} : invalid option"
 			echo 
-			usage
-
-			exit 1
+			usage 1
 			;;
 	esac
 done
@@ -345,11 +291,7 @@ done
 
 if [ -n "${APP_NAME}" ]
 then
-	if [ ! -f ${PLATFORM_JAR} ]
-	then
-		install_platform
-	fi
-
+	check_install
 	create_plugin
 fi
 
