@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Observer;
 
 import com.alma.platform.data.PluginDescriptor;
 import com.alma.platform.data.PluginParser;
@@ -27,7 +30,7 @@ public class Platform {
 	private static Platform INSTANCE;
 
 	// Monitoring of platform
-	private Monitor monitor;
+	private IMonitor monitor;
 
 	// Parser of config file
 	private PluginParser parser;
@@ -37,6 +40,9 @@ public class Platform {
 
 	// Class loader of external class
 	private ClassLoader classLoader;
+	
+	//list of plugins' states
+	private Map<PluginDescriptor,Boolean> pluginsMap;
 
 	// --- CONSTRUCTOR
 
@@ -48,7 +54,7 @@ public class Platform {
 	 * @throws IllegalArgumentException
 	 */
 	private Platform() throws IOException, NoSuchElementException, IllegalArgumentException {
-		monitor = new Monitor();
+		pluginsMap= new HashMap<PluginDescriptor,Boolean>();
 		parser = new PluginParser();
 		pluginDescriptor = parser.parseFile("config.txt"); // Parse of
 															// extensions file
@@ -86,16 +92,21 @@ public class Platform {
 			pluginUrls[cpt] = new URL(pluginUrl);
 			++cpt;
 		}
-
-		classLoader = new URLClassLoader(pluginUrls);
-
-		// Manage monitoring
-
-		// TODO the monitoring
+		initPluginsMap(pluginDescriptor);
+		classLoader = new URLClassLoader(pluginUrls);		
 
 	}
 
-	// --- PRIVATE METHODS
+	
+	/**
+	 * load the list of available plugins in the pluginsMap
+	 * @param pluginDescr
+	 */
+	private void initPluginsMap(List<PluginDescriptor> pluginDescr) {
+		for(int i=0; i<pluginDescr.size();i++){
+			pluginsMap.put(pluginDescr.get(i), false);
+		}
+	}
 
 	/*
 	 * Checks if the plugin given in parameter implements the IMainPlugin
@@ -157,7 +168,7 @@ public class Platform {
 			if (plugin.getInterfaceName().equals(need.getName()))
 				result.add(plugin);
 		}
-
+		
 		return result;
 	}
 
@@ -180,7 +191,7 @@ public class Platform {
 			if (plugin.isAutorun() && checkMainPlugin(plugin))
 				result.add(plugin);
 		}
-
+		
 		return result;
 	}
 
@@ -196,8 +207,75 @@ public class Platform {
 	 */
 	public Object getPluginInstance(String className)
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-
+		if(monitor != null){
+			updatePluginsMap(className);
+			notify(this);
+		}
 		return Class.forName(className, true, classLoader).newInstance();
 	}
+	
+	
+	private void notify(Platform platform) {
+		/*for (Observer observer : observers) {
+	         observer.update();
+	      }*/
+		//TODO
+		//FIXME 
+		//https://www.tutorialspoint.com/design_pattern/observer_pattern.htm
+	}
+
+
+	/**
+	 * update the state of the loaded plugin
+	 * @param className
+	 */
+	private void updatePluginsMap(String className) {
+		for(Map.Entry<PluginDescriptor, Boolean> entry : pluginsMap.entrySet()) {
+			if(entry.getKey().getClassName()==className){
+				entry.setValue(true);
+			}
+			break;
+		}
+	}
+
+
+	public List<PluginDescriptor> getPluginDescriptor() {
+		return pluginDescriptor;
+	}
+
+
+	public void setPluginDescriptor(List<PluginDescriptor> pluginDescriptor) {
+		this.pluginDescriptor = pluginDescriptor;
+	}
+
+
+	public Map<PluginDescriptor, Boolean> getPluginsMap() {
+		return pluginsMap;
+	}
+
+
+	public void setPluginsMap(Map<PluginDescriptor, Boolean> pluginsMap) {
+		this.pluginsMap = pluginsMap;
+	}
+
+
+	public IMonitor getMonitor() {
+		return monitor;
+	}
+
+
+	/**
+	 * 
+	 * @param monitor
+	 */
+	public void setMonitor(IMonitor monitor){
+		this.monitor=monitor;
+	}
+	
+	
+
+	
+	
+	
 
 }

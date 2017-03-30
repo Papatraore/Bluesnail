@@ -1,71 +1,50 @@
-package com.alma.platform.control;
+package com.alma.application;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Map.Entry;
 
-import javax.swing.JLabel;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.alma.platform.control.IMonitor;
+import com.alma.platform.control.Platform;
+import com.alma.platform.data.IMainPlugin;
 import com.alma.platform.data.PluginDescriptor;
 
 /**
- * 
- * @author 
+ * Hello world!
  *
  */
-public class Monitor{
+public class App implements IMainPlugin, IMonitor, Observer
+{
 
-	
-	private Map<PluginDescriptor,Boolean> pluginsMap;
+	//private Map<PluginDescriptor,Boolean> pluginsMap;
 	JFrame frame;
 	JPanel panel;
-	
-
-	
-	
-	
-	
-	/**
-	 * 
-	 * @param p List of all available plugins given by the platform
-	 */
-	public Monitor(List<PluginDescriptor> p) {
-		pluginsMap = new HashMap<PluginDescriptor,Boolean>();
-		for(int i=0; i<p.size();i++){
-			pluginsMap.put(p.get(i), false);
-		}
-		
-		frame = new JFrame();
-		panel = new JPanel();
-		//this.displayPluginsAvailable();
-		this.displayHCI();
-	}
-	
-	
-	
+	Platform platform;
 	
 	/* (non-Javadoc)
 	 * @see com.alma.platform.control.IMonitor#displayPluginsAvailable()
 	 */
-	
+	@Override
 	public void displayPluginsAvailable(){
-		for(Map.Entry<PluginDescriptor, Boolean> entry : pluginsMap.entrySet()) {
+		for(Map.Entry<PluginDescriptor, Boolean> entry : platform.getPluginsMap().entrySet()) {
 			String cle = entry.getKey().getPluginName();
 			Boolean valeur = entry.getValue();
 			System.out.println("plugin name : "+cle+" | charged :"+valeur);
 		}
 	}
 	
+
+	
 	/**
 	 * 
 	 */
+	@Override
 	public void displayHCI(){
-		for(Map.Entry<PluginDescriptor, Boolean> entry : pluginsMap.entrySet()) {
+		for(Map.Entry<PluginDescriptor, Boolean> entry : platform.getPluginsMap().entrySet()) {
 			String cle = entry.getKey().getPluginName();
 			Boolean valeur = entry.getValue();
 				JLabel l = new JLabel("plugin name : "+cle+" | charged :"+valeur);
@@ -77,13 +56,10 @@ public class Monitor{
 	}
 	
 	
-	
-	
-	
 	/* (non-Javadoc)
 	 * @see com.alma.platform.control.IMonitor#updatePlugins(java.lang.String)
 	 */
-	
+	/*@Override
 	public void updatePlugins(String classname){
 		for(Map.Entry<PluginDescriptor, Boolean> entry : pluginsMap.entrySet()) {
 			if(entry.getKey().getClassName()==classname){
@@ -91,14 +67,27 @@ public class Monitor{
 			}
 			break;
 		}
-		//frame.revalidate();
-		//frame.repaint();
+	}*/
+
+	@Override
+	public void run() {
+		// FIXME 
+		
+		
+		frame = new JFrame();
+		panel = new JPanel();
+		this.displayHCI();
+		
 	}
 
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 	
-	
-	
-	
-	
-	
+    
 }
