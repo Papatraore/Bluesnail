@@ -113,9 +113,6 @@ create_plugin()
 			sed -i "s/PARENT_NAME/${PARENT_NAME}/g" ./pom.xml
 			sed -i "s/PARENT_JAR/${PARENT_NAME}-1.0-SNAPSHOT.jar/g" ./pom.xml
 
-			# TODO : Step 4 : Modify the config file of the platform
-			# cd ${PLATFORM_PATH}
-
 			echo
 			echo "[INFO] The plugin has been created in the directory : ${EXTENSIONS_PATH}/${APP_NAME}"
 			echo "[INFO] Note : The parent plugin (${PARENT_NAME}) must be compiled before using this extension"
@@ -148,9 +145,6 @@ create_plugin()
 			# Step 3 : set the app name in the pom.xml
 
 			sed -i "s/APP_NAME/${APP_NAME}/g" ./pom.xml
-
-			# TODO : Step 4 : Modify the config file of the platform
-			# cd ${PLATFORM_PATH}
 
 			echo
 			echo "[INFO] The plugin has been created in the directory : ${APPLICATIONS_PATH}/${APP_NAME}"
@@ -231,7 +225,7 @@ done
 
 if [ -n "${APP_NAME}" ]
 then
-	if [ ! -f ${PLATFORM_JAR} ] 
+	if [ ! -f ${PLATFORM_JAR} ] || [ ! -d "${APPLICATIONS_PATH}" ] || [ ! -d "${EXTENSIONS_PATH}" ]
 	then
 		install_platform
 	fi
