@@ -40,9 +40,9 @@ public class Platform {
 
 	// Class loader of external class
 	private ClassLoader classLoader;
-	
-	//list of plugins' states
-	private Map<PluginDescriptor,Boolean> pluginsMap;
+
+	// list of plugins' states
+	private Map<PluginDescriptor, Boolean> pluginsMap;
 
 	// --- CONSTRUCTOR
 
@@ -54,7 +54,7 @@ public class Platform {
 	 * @throws IllegalArgumentException
 	 */
 	private Platform() throws IOException, NoSuchElementException, IllegalArgumentException {
-		pluginsMap= new HashMap<PluginDescriptor,Boolean>();
+		pluginsMap = new HashMap<PluginDescriptor, Boolean>();
 		parser = new PluginParser();
 		pluginDescriptor = parser.parseFile("config.txt"); // Parse of
 															// extensions file
@@ -93,17 +93,17 @@ public class Platform {
 			++cpt;
 		}
 		initPluginsMap(pluginDescriptor);
-		classLoader = new URLClassLoader(pluginUrls);		
+		classLoader = new URLClassLoader(pluginUrls);
 
 	}
 
-	
 	/**
 	 * load the list of available plugins in the pluginsMap
+	 * 
 	 * @param pluginDescr
 	 */
 	private void initPluginsMap(List<PluginDescriptor> pluginDescr) {
-		for(int i=0; i<pluginDescr.size();i++){
+		for (int i = 0; i < pluginDescr.size(); i++) {
 			pluginsMap.put(pluginDescr.get(i), false);
 		}
 	}
@@ -168,7 +168,7 @@ public class Platform {
 			if (plugin.getInterfaceName().equals(need.getName()))
 				result.add(plugin);
 		}
-		
+
 		return result;
 	}
 
@@ -191,7 +191,7 @@ public class Platform {
 			if (plugin.isAutorun() && checkMainPlugin(plugin))
 				result.add(plugin);
 		}
-		
+
 		return result;
 	}
 
@@ -207,75 +207,66 @@ public class Platform {
 	 */
 	public Object getPluginInstance(String className)
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		if(monitor != null){
+		if (monitor != null) {
 			updatePluginsMap(className);
 			notify(this);
 		}
 		return Class.forName(className, true, classLoader).newInstance();
 	}
-	
-	
-	private void notify(Platform platform) {
-		/*for (Observer observer : observers) {
-	         observer.update();
-	      }*/
-		//TODO
-		//FIXME 
-		//https://www.tutorialspoint.com/design_pattern/observer_pattern.htm
-	}
 
+	private void notify(Platform platform) {
+		/*
+		 * for (Observer observer : observers) { observer.update(); }
+		 */
+		// TODO
+		// FIXME
+		// https://www.tutorialspoint.com/design_pattern/observer_pattern.htm
+	}
 
 	/**
 	 * update the state of the loaded plugin
+	 * 
 	 * @param className
 	 */
 	private void updatePluginsMap(String className) {
-		for(Map.Entry<PluginDescriptor, Boolean> entry : pluginsMap.entrySet()) {
-			if(entry.getKey().getClassName()==className){
+		for (Map.Entry<PluginDescriptor, Boolean> entry : pluginsMap.entrySet()) {
+			if (entry.getKey().getClassName() == className) {
 				entry.setValue(true);
 			}
 			break;
 		}
 	}
 
-
 	public List<PluginDescriptor> getPluginDescriptor() {
 		return pluginDescriptor;
 	}
 
-
+	// FIXME Remove this method : A plugin can't modify the list of loaded
+	// plugin !
 	public void setPluginDescriptor(List<PluginDescriptor> pluginDescriptor) {
 		this.pluginDescriptor = pluginDescriptor;
 	}
-
 
 	public Map<PluginDescriptor, Boolean> getPluginsMap() {
 		return pluginsMap;
 	}
 
-
+	// FIXME Idem : A plugin can't modify the states of loaded plugin ! It cant
+	// only read it.
 	public void setPluginsMap(Map<PluginDescriptor, Boolean> pluginsMap) {
 		this.pluginsMap = pluginsMap;
 	}
-
 
 	public IMonitor getMonitor() {
 		return monitor;
 	}
 
-
 	/**
 	 * 
 	 * @param monitor
 	 */
-	public void setMonitor(IMonitor monitor){
-		this.monitor=monitor;
+	public void setMonitor(IMonitor monitor) {
+		this.monitor = monitor;
 	}
-	
-	
-
-	
-	
-	
 
 }

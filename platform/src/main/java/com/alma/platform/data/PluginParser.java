@@ -9,9 +9,9 @@ import java.util.NoSuchElementException;
 
 /**
  * Parser of config file which contains information about plugin. The config
- * file must respect the following syntax (on one line) : </br>
- * name=<plugin name>;class=<main class name>;interface=<interface
- * name>;directory=<path of the plugin>;autorun=<mode autorun>
+ * file must respect the following syntax : </br>
+ * name=<i>plugin name</i>;class=<i>main class name</i>;interface=<i>interface
+ * name</i>;directory=<i>path of the plugin</i>;autorun=<i>mode autorun</i>
  */
 public class PluginParser {
 
