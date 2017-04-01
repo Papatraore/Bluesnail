@@ -29,9 +29,6 @@ public class Platform {
 	 */
 	private static Platform INSTANCE;
 
-	// Monitoring of platform
-	private IMonitor monitor;
-
 	// Parser of config file
 	private PluginParser parser;
 
@@ -40,6 +37,9 @@ public class Platform {
 
 	// Class loader of external class
 	private ClassLoader classLoader;
+
+	// Monitoring of platform
+	private List<IMonitor> monitors;
 
 	// list of plugins' states
 	private Map<PluginDescriptor, PluginState> pluginsState;
@@ -55,6 +55,7 @@ public class Platform {
 	 */
 	private Platform() throws IOException, NoSuchElementException, IllegalArgumentException {
 		pluginsState = new HashMap<PluginDescriptor, PluginState>();
+		monitors = new ArrayList<IMonitor>();
 		parser = new PluginParser();
 		plugins = parser.parseFile("config.txt"); // Parse of extensions file
 
@@ -238,22 +239,33 @@ public class Platform {
 	}
 
 	/**
-	 * Set the current monitor. The monitor is used by the platform to manage
-	 * the state of each plugin.
+	 * Add a monitor. Monitors are used by the platform to manage the state of
+	 * each plugin.
 	 * 
 	 * @param monitor
 	 *            An available monitor that implement IMonitor.
 	 */
-	public void setMonitor(IMonitor pMonitor) {
-		monitor = pMonitor;
+	public void addMonitor(IMonitor monitor) {
+		monitors.add(monitor);
 	}
 
 	/**
-	 * Update the monitor if there is one.
+	 * Remove a monitor from the list
+	 * 
+	 * @param monitor
+	 *            The monitor object which have to be removed
+	 */
+	public void removeMonitor(IMonitor monitor) {
+		monitors.remove(monitor);
+	}
+
+	/**
+	 * Update all monitors.
 	 */
 	public void notifyMonitor() {
-		if (monitor != null)
+		for(IMonitor monitor : monitors){
 			monitor.update();
+		}
 	}
 
 }

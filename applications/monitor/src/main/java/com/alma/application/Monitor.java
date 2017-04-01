@@ -50,7 +50,7 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 	public void run() {		
 		try {
 			platform = Platform.getInstance();
-			platform.setMonitor(this);
+			platform.addMonitor(this);
 			pluginsState = platform.getPluginsState();
 
 			stateHeader = new String[2];
@@ -85,7 +85,7 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 		int i = 0;
 		for (Map.Entry<PluginDescriptor, PluginState> entry : pluginsState.entrySet()) {
 
-			stateData[i][0] = entry.getKey();
+			stateData[i][0] = entry.getKey().getPluginName();
 			stateData[i][1] = entry.getValue();
 			++i;
 		}
