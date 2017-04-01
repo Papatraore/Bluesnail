@@ -2,11 +2,13 @@ package com.alma.application;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 
 import com.alma.platform.control.IMonitor;
 import com.alma.platform.control.Platform;
@@ -26,10 +28,15 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 	private Map<PluginDescriptor, PluginState> pluginsState;
 
 	private GridLayout mainLayout;
-	private JScrollPane statePanel;
+
+	private JScrollPane stateScrollPanel;
 	private JTable stateTable;
 	private Object[][] stateData;
 	private String[] stateHeader;
+
+	private JScrollPane logScrollPanel;
+	private JTextArea logTextArea;
+	private List<String> logData;
 
 	public Monitor() {
 		super("Monitoring");
@@ -38,6 +45,10 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 	@Override
 	public void update() {
 		fillDataState();
+		printLog();
+		
+		repaint();
+		revalidate();
 	}
 
 	@Override
@@ -50,20 +61,18 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 			stateHeader = new String[2];
 			stateData = new Object[pluginsState.size()][2];
 
-			// Fill the header
+			// Init data
 
 			stateHeader[0] = "Plugin";
 			stateHeader[1] = "State";
-
-			// Fill the data
-
 			fillDataState();
+
+			logData = platform.getLog();
 
 			// Construct the GUI
 
 			setSize(400, 600);
 			setMinimumSize(new Dimension(400, 600));
-			
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 			addWindowListener(new java.awt.event.WindowAdapter() {
@@ -74,13 +83,20 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 				}
 			});
 
-			mainLayout = new GridLayout(1, 1); // TODO see for using proxy...
+			mainLayout = new GridLayout(2, 1);
 			setLayout(mainLayout);
 
 			stateTable = new JTable(stateData, stateHeader);
-			statePanel = new JScrollPane(stateTable);
+			stateScrollPanel = new JScrollPane(stateTable);
 
-			add(statePanel);
+			logTextArea = new JTextArea();
+			logTextArea.setEditable(false);
+			logScrollPanel = new JScrollPane(logTextArea);
+			
+			printLog();
+			
+			add(stateScrollPanel);
+			add(logScrollPanel);
 			setVisible(true);
 
 		} catch (Exception e) {
@@ -97,8 +113,14 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 			++i;
 		}
 	}
-	
-	private void removeMonitor(){
+
+	private void printLog() {
+		for (String log : logData) {
+			logTextArea.append(log + "\n");
+		}
+	}
+
+	private void removeMonitor() {
 		platform.removeMonitor(this);
 	}
 }

@@ -1,6 +1,7 @@
 package com.alma.platform.control;
 
 import java.io.IOException;
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -41,8 +42,11 @@ public class Platform {
 	// Monitoring of platform
 	private List<IMonitor> monitors;
 
-	// list of plugins' states
+	// List of plugins' states
 	private Map<PluginDescriptor, PluginState> pluginsState;
+
+	// List of plugin logs
+	private List<String> logs;
 
 	// --- CONSTRUCTOR
 
@@ -56,6 +60,7 @@ public class Platform {
 	private Platform() throws IOException, NoSuchElementException, IllegalArgumentException {
 		pluginsState = new HashMap<PluginDescriptor, PluginState>();
 		monitors = new ArrayList<IMonitor>();
+		logs = new ArrayList<String>();
 		parser = new PluginParser();
 		plugins = parser.parseFile("config.txt"); // Parse of extensions file
 
@@ -209,11 +214,14 @@ public class Platform {
 	 */
 	public Object getPluginInstance(PluginDescriptor plugin) {
 
-		Object newInstance = null;
+		Object result = null;
 
 		try {
-			newInstance = Class.forName(plugin.getClassName(), true, classLoader).newInstance();
+			Object newInstance = Class.forName(plugin.getClassName(), true, classLoader).newInstance();
 			pluginsState.put(plugin, PluginState.LOADED);
+
+			result = Proxy.newProxyInstance(newInstance.getClass().getClassLoader(), newInstance.getClass().getInterfaces(),
+					new LogProxy(newInstance));
 
 		} catch (ClassNotFoundException e) {
 			pluginsState.put(plugin, PluginState.ERROR);
@@ -225,7 +233,7 @@ public class Platform {
 
 		notifyMonitor();
 
-		return newInstance;
+		return result;
 	}
 
 	/**
@@ -250,10 +258,10 @@ public class Platform {
 	}
 
 	/**
-	 * Remove a monitor from the list
+	 * Remove a monitor from the list.
 	 * 
 	 * @param monitor
-	 *            The monitor object which have to be removed
+	 *            The monitor object which have to be removed.
 	 */
 	public void removeMonitor(IMonitor monitor) {
 		monitors.remove(monitor);
@@ -263,9 +271,37 @@ public class Platform {
 	 * Update all monitors.
 	 */
 	public void notifyMonitor() {
-		for(IMonitor monitor : monitors){
+		for (IMonitor monitor : monitors) {
 			monitor.update();
 		}
+	}
+
+	/**
+	 * Returns the list of current monitors.
+	 * 
+	 * @return The list which contains all loaded monitors.
+	 */
+	public List<IMonitor> getMonitor() {
+		return monitors;
+	}
+
+	/**
+	 * Add a log in the list. Each time a method is called, a log is added.
+	 * 
+	 * @param log A string which represents the log
+	 */
+	public void addLog(String log) {
+		logs.add(log);
+		notifyMonitor();
+	}
+
+	/**
+	 * Returns the list of current log.
+	 * 
+	 * @return The list which contains all log at a precise time.
+	 */
+	public List<String> getLog() {
+		return logs;
 	}
 
 }
