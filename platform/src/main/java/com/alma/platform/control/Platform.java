@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Observer;
 
 import com.alma.platform.data.PluginDescriptor;
 import com.alma.platform.data.PluginParser;
+import com.alma.platform.data.PluginState;
 
 /**
  * This class represents the BlueSnail platform and is used to manage the
@@ -36,13 +36,13 @@ public class Platform {
 	private PluginParser parser;
 
 	// List of available plugin
-	private List<PluginDescriptor> pluginDescriptor;
+	private List<PluginDescriptor> plugins;
 
 	// Class loader of external class
 	private ClassLoader classLoader;
 
 	// list of plugins' states
-	private Map<PluginDescriptor, Boolean> pluginsMap;
+	private Map<PluginDescriptor, PluginState> pluginsState;
 
 	// --- CONSTRUCTOR
 
@@ -54,21 +54,20 @@ public class Platform {
 	 * @throws IllegalArgumentException
 	 */
 	private Platform() throws IOException, NoSuchElementException, IllegalArgumentException {
-		pluginsMap = new HashMap<PluginDescriptor, Boolean>();
+		pluginsState = new HashMap<PluginDescriptor, PluginState>();
 		parser = new PluginParser();
-		pluginDescriptor = parser.parseFile("config.txt"); // Parse of
-															// extensions file
+		plugins = parser.parseFile("config.txt"); // Parse of extensions file
 
-		URL pluginUrls[] = new URL[pluginDescriptor.size()];
+		URL pluginUrls[] = new URL[plugins.size()];
 		String userDirUrl[] = System.getProperty("user.dir").split("/");
 		int cpt = 0;
 
 		/*
 		 * Get and treats the absolute path of the plugin directory to create
-		 * the ClassLoader
+		 * the ClassLoader and add each plugin in the plugins state map.
 		 */
 
-		for (PluginDescriptor plugin : pluginDescriptor) {
+		for (PluginDescriptor plugin : plugins) {
 
 			String pluginUrl = "file:///";
 
@@ -90,22 +89,15 @@ public class Platform {
 				pluginUrl += plugin.getDirectoryPath();
 
 			pluginUrls[cpt] = new URL(pluginUrl);
+
+			// Add the plugin in the pluginMap
+
+			pluginsState.put(plugin, PluginState.UNLOADED);
+
 			++cpt;
 		}
-		initPluginsMap(pluginDescriptor);
+
 		classLoader = new URLClassLoader(pluginUrls);
-
-	}
-
-	/**
-	 * load the list of available plugins in the pluginsMap
-	 * 
-	 * @param pluginDescr
-	 */
-	private void initPluginsMap(List<PluginDescriptor> pluginDescr) {
-		for (int i = 0; i < pluginDescr.size(); i++) {
-			pluginsMap.put(pluginDescr.get(i), false);
-		}
 	}
 
 	/*
@@ -158,18 +150,27 @@ public class Platform {
 	 * @param need
 	 *            The need of the application. The need is represented by an
 	 *            interface that the plugin must implement.
-	 * @return A list of available plugin that correspond to the client need.
+	 * @return A list of available plugin which corresponds to the client need.
 	 */
 	public List<PluginDescriptor> getListPlugin(Class<?> need) {
 
 		List<PluginDescriptor> result = new ArrayList<PluginDescriptor>();
 
-		for (PluginDescriptor plugin : pluginDescriptor) {
+		for (PluginDescriptor plugin : plugins) {
 			if (plugin.getInterfaceName().equals(need.getName()))
 				result.add(plugin);
 		}
 
 		return result;
+	}
+
+	/**
+	 * Returns the list of all available plugins with their description.
+	 * 
+	 * @return A list which contains all available plugins.
+	 */
+	public List<PluginDescriptor> getListPlugin() {
+		return plugins;
 	}
 
 	/**
@@ -187,7 +188,7 @@ public class Platform {
 		 * Checks first if the plugin is autorun and then check if it implements
 		 * the good interface
 		 */
-		for (PluginDescriptor plugin : pluginDescriptor) {
+		for (PluginDescriptor plugin : plugins) {
 			if (plugin.isAutorun() && checkMainPlugin(plugin))
 				result.add(plugin);
 		}
@@ -205,68 +206,54 @@ public class Platform {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	public Object getPluginInstance(String className)
-			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		if (monitor != null) {
-			updatePluginsMap(className);
-			notify(this);
-		}
-		return Class.forName(className, true, classLoader).newInstance();
-	}
+	public Object getPluginInstance(PluginDescriptor plugin) {
 
-	private void notify(Platform platform) {
-		/*
-		 * for (Observer observer : observers) { observer.update(); }
-		 */
-		// TODO
-		// FIXME
-		// https://www.tutorialspoint.com/design_pattern/observer_pattern.htm
+		Object newInstance = null;
+
+		try {
+			newInstance = Class.forName(plugin.getClassName(), true, classLoader).newInstance();
+			pluginsState.put(plugin, PluginState.LOADED);
+
+		} catch (ClassNotFoundException e) {
+			pluginsState.put(plugin, PluginState.ERROR);
+		} catch (InstantiationException e) {
+			pluginsState.put(plugin, PluginState.ERROR);
+		} catch (IllegalAccessException e) {
+			pluginsState.put(plugin, PluginState.ERROR);
+		}
+
+		notifyMonitor();
+
+		return newInstance;
 	}
 
 	/**
-	 * update the state of the loaded plugin
+	 * Returns the map which contains the state for each plugin. The different
+	 * states are defined in the PluginState class.
 	 * 
-	 * @param className
+	 * @return A map which contains each plugin (key) and their state (value).
 	 */
-	private void updatePluginsMap(String className) {
-		for (Map.Entry<PluginDescriptor, Boolean> entry : pluginsMap.entrySet()) {
-			if (entry.getKey().getClassName() == className) {
-				entry.setValue(true);
-			}
-			break;
-		}
-	}
-
-	public List<PluginDescriptor> getPluginDescriptor() {
-		return pluginDescriptor;
-	}
-
-	// FIXME Remove this method : A plugin can't modify the list of loaded
-	// plugin !
-	public void setPluginDescriptor(List<PluginDescriptor> pluginDescriptor) {
-		this.pluginDescriptor = pluginDescriptor;
-	}
-
-	public Map<PluginDescriptor, Boolean> getPluginsMap() {
-		return pluginsMap;
-	}
-
-	// FIXME Idem : A plugin can't modify the states of loaded plugin ! It cant
-	// only read it.
-	public void setPluginsMap(Map<PluginDescriptor, Boolean> pluginsMap) {
-		this.pluginsMap = pluginsMap;
-	}
-
-	public IMonitor getMonitor() {
-		return monitor;
+	public Map<PluginDescriptor, PluginState> getPluginsState() {
+		return pluginsState;
 	}
 
 	/**
+	 * Set the current monitor. The monitor is used by the platform to manage
+	 * the state of each plugin.
 	 * 
 	 * @param monitor
+	 *            An available monitor that implement IMonitor.
 	 */
-	public void setMonitor(IMonitor monitor) {
-		this.monitor = monitor;
+	public void setMonitor(IMonitor pMonitor) {
+		monitor = pMonitor;
+	}
+
+	/**
+	 * Update the monitor if there is one.
+	 */
+	public void notifyMonitor() {
+		if (monitor != null)
+			monitor.update();
 	}
 
 }

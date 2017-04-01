@@ -1,14 +1,13 @@
 package com.alma.platform.control;
 
+/**
+ * Interface that a monitor must implement.
+ *
+ */
 public interface IMonitor {
-
-	public abstract void displayPluginsAvailable();
-	public void displayHCI();
-
+	
 	/**
-	 * 
-	 * @param classname classname of the launched plugin 
+	 * Update the current data manage by the monitor.
 	 */
-	//public abstract void updatePlugins(String classname);
-
+	void update();
 }
