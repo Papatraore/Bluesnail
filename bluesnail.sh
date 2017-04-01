@@ -15,11 +15,13 @@ TEMPLATES_PATH="${PROJECT_PATH}/templates"
 # Platform jar file path
 
 PLATFORM_JAR="${PLATFORM_PATH}/target/bluesnail-platform-1.0-SNAPSHOT.jar"
+CONFIG_FILE="${PLATFORM_PATH}/config.txt"
 
 # Information for the creation of plugin
 
 APP_NAME=""
 PARENT_NAME=""
+CONFIG_LINE=""
 
 usage()
 {
@@ -174,12 +176,38 @@ create_plugin()
 			sed -i "s/APP_NAME/${APP_NAME}/g" ./pom.xml
 			sed -i "s/PARENT_NAME/${PARENT_NAME}/g" ./pom.xml
 			sed -i "s/PARENT_JAR/${PARENT_NAME}-1.0-SNAPSHOT.jar/g" ./pom.xml
+			
+			# Step 4 : set the name of the main class
+			
+			main_class_path="${EXTENSIONS_PATH}/${APP_NAME}/src/main/java/com/alma/extension"
+			
+			sed -i "s/App/${APP_NAME}/g" ${main_class_path}/App.java
+			mv ${main_class_path}/App.java ${main_class_path}/${APP_NAME}.java
+			
+			# Step 5 : add line in the config file
+			
+			CONFIG_LINE="name=${APP_NAME};"
+			CONFIG_LINE="${CONFIG_LINE}class=com.alma.extension.${APP_NAME};"
+			CONFIG_LINE="${CONFIG_LINE}interface=none;"
+			CONFIG_LINE="${CONFIG_LINE}directory=extensions/${APP_NAME}/target/classes/;"
+			CONFIG_LINE="${CONFIG_LINE}autorun=false"
 
+			c=`tail -c 2 ${CONFIG_FILE}`
+
+			if [ "$c" != "" ]; then 
+				echo "" >> ${CONFIG_FILE}
+			fi
+			
+			echo "${CONFIG_LINE}" >> ${CONFIG_FILE}
+			
 			echo
 			echo "[INFO] The plugin has been created in the directory : ${EXTENSIONS_PATH}/${APP_NAME}"
 			echo "[INFO] Note : The parent plugin (${PARENT_NAME}) must be compiled before using this extension"
+			echo "[INFO] The name of the plugin can be changed but you must change it in the config file"
+			
 		else
 			echo "[ERROR] This plugin already exists"
+			exit 1
 		fi
 
 	else
@@ -207,11 +235,35 @@ create_plugin()
 			# Step 3 : set the app name in the pom.xml
 
 			sed -i "s/APP_NAME/${APP_NAME}/g" ./pom.xml
+			
+			# Step 4 : set the name of the main class
+			
+			main_class_path="${APPLICATIONS_PATH}/${APP_NAME}/src/main/java/com/alma/application"
+			
+			sed -i "s/App/${APP_NAME}/g" ${main_class_path}/App.java
+			mv ${main_class_path}/App.java ${main_class_path}/${APP_NAME}.java
+			
+			# Step 5 : add line in the config file
+			
+			CONFIG_LINE="name=${APP_NAME};"
+			CONFIG_LINE="${CONFIG_LINE}class=com.alma.application.${APP_NAME};"
+			CONFIG_LINE="${CONFIG_LINE}interface=com.alma.platform.data.IMainPlugin;"
+			CONFIG_LINE="${CONFIG_LINE}directory=applications/${APP_NAME}/target/classes/;"
+			CONFIG_LINE="${CONFIG_LINE}autorun=true"
+			
+			c=`tail -c 2 ${CONFIG_FILE}`
+
+			if [ "$c" != "" ]; then 
+				echo "" >> ${CONFIG_FILE}
+			fi
+			
+			echo "${CONFIG_LINE}" >> ${CONFIG_FILE}
 
 			echo
 			echo "[INFO] The plugin has been created in the directory : ${APPLICATIONS_PATH}/${APP_NAME}"
 		else
 			echo "[ERROR] This plugin already exists"
+			exit 1
 		fi
 	fi
 

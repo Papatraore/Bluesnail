@@ -33,21 +33,15 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 
 	public Monitor() {
 		super("Monitoring");
-
-		setSize(400, 600);
-		setMinimumSize(new Dimension(400, 600));
-
-		// setDefaultCloseOperation(EXIT_ON_CLOSE); // FIXME Modify the behavior
-		// when closing the window...
 	}
 
 	@Override
 	public void update() {
-		
+		fillDataState();
 	}
 
 	@Override
-	public void run() {		
+	public void run() {
 		try {
 			platform = Platform.getInstance();
 			platform.addMonitor(this);
@@ -66,6 +60,19 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 			fillDataState();
 
 			// Construct the GUI
+
+			setSize(400, 600);
+			setMinimumSize(new Dimension(400, 600));
+			
+			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+			addWindowListener(new java.awt.event.WindowAdapter() {
+				@Override
+				public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+					removeMonitor();
+					dispose();
+				}
+			});
 
 			mainLayout = new GridLayout(1, 1); // TODO see for using proxy...
 			setLayout(mainLayout);
@@ -89,5 +96,9 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 			stateData[i][1] = entry.getValue();
 			++i;
 		}
+	}
+	
+	private void removeMonitor(){
+		platform.removeMonitor(this);
 	}
 }

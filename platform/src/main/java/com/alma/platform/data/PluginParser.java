@@ -40,39 +40,41 @@ public class PluginParser {
 			// Read a line
 			line = reader.readLine();
 
-			// Split the line with ";" and store it in properties array.
-			String[] properties = line.split(";");
+			if (!line.equals("")) {
+				// Split the line with ";" and store it in properties array.
+				String[] properties = line.split(";");
 
-			for (int i = 0; i < properties.length; ++i) {
-				// Split the property with "=" character
-				String[] property = properties[i].split("=");
+				for (int i = 0; i < properties.length; ++i) {
+					// Split the property with "=" character
+					String[] property = properties[i].split("=");
 
-				String propName = property[0];
-				String propValue = property[1];
+					String propName = property[0];
+					String propValue = property[1];
 
-				if (propName.equals("name")) {
-					plugin.setPluginName(propValue);
-				} else if (propName.equals("class")) {
-					plugin.setClassName(propValue);
-				} else if (propName.equals("interface")) {
-					plugin.setInterfaceName(propValue);
-				} else if (propName.equals("directory")) {
-					plugin.setDirectoryPath(propValue);
-				} else if (propName.equals("autorun")) {
-					if (propValue.equals("true"))
-						plugin.setAutorun(true);
+					if (propName.equals("name")) {
+						plugin.setPluginName(propValue);
+					} else if (propName.equals("class")) {
+						plugin.setClassName(propValue);
+					} else if (propName.equals("interface")) {
+						plugin.setInterfaceName(propValue);
+					} else if (propName.equals("directory")) {
+						plugin.setDirectoryPath(propValue);
+					} else if (propName.equals("autorun")) {
+						if (propValue.equals("true"))
+							plugin.setAutorun(true);
+					} else {
+						reader.close();
+						throw new NoSuchElementException(
+								"Error when parsing the file, the property " + propName + " is not accepted.");
+					}
+				}
+
+				if (checkPlugin(plugin)) {
+					result.add(plugin);
 				} else {
 					reader.close();
-					throw new NoSuchElementException(
-							"Error when parsing the file, the property " + propName + "is not accepted.");
+					throw new IllegalArgumentException("Error when parsing the file, a property is missing.");
 				}
-			}
-
-			if (checkPlugin(plugin)) {
-				result.add(plugin);
-			} else {
-				reader.close();
-				throw new IllegalArgumentException("Error when parsing the file, a property is missing.");
 			}
 		}
 
