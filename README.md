@@ -42,4 +42,4 @@ At the root of the project please run one of these following commands :
 ./bluesnail.sh -c <extension-name> -p <app-name>
 ```
 
-**Important** : If you create a plugin, some modifications may be ne required in the config.txt file in the platform. For more informations, please refer to the documentation (section "Développer un plugin".
+**Important** : If you create a plugin, some modifications may be required in the config.txt file in the platform. For more informations, please refer to the documentation (section "Développer un plugin".
