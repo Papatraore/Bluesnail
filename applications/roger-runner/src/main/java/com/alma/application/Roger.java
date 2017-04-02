@@ -21,7 +21,6 @@ public class Roger extends Sprite {
 				.replace("platform",
 						"applications/roger-runner/src/main/resources/running_phase0.png");
 		
-		System.out.println(currentDir);
 		loadImage(currentDir);
 
 		fireballs = new ArrayList<>();
