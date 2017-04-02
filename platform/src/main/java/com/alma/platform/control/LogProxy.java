@@ -24,10 +24,8 @@ public class LogProxy implements InvocationHandler {
 	@Override
 	public Object invoke(Object obj, Method method, Object[] args) throws Throwable {
 
-		String msg = "Method " + method.getName() + "() has been called by " + obj.getClass().getName();
+		String msg = "Method " + method.getName() + "() called by " + obj.getClass().getName();
 		Platform.getInstance().addLog(msg);
-
-		System.out.println(msg);
 
 		return method.invoke(target, args);
 	}

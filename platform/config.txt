@@ -1,2 +1,4 @@
 name=roger-runner;class=com.alma.application.App;interface=com.alma.platform.data.IMainPlugin;directory=applications/roger-runner/target/classes/;autorun=true
 name=monitor;class=com.alma.application.Monitor;interface=com.alma.platform.data.IMainPlugin;directory=applications/monitor/target/classes/;autorun=true
+name=aliensFactory;class=com.alma.extension.AliensFactory;interface=none;directory=extensions/aliensFactory/target/classes/;autorun=false
+name=highScore;class=com.alma.extension.HighScore;interface=none;directory=extensions/highScore/target/classes/;autorun=false
