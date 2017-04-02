@@ -33,6 +33,7 @@ public class Board extends JPanel implements ActionListener {
 	private final int DELAY = 15;
     private final int NBR_FIRE = 50;
     private Background backgroundImage;
+    private Background backgroundImageSwitch;
           
 	private int[][] pos = new int[NBR_FIRE][NBR_FIRE];
 
@@ -57,7 +58,8 @@ public class Board extends JPanel implements ActionListener {
 		//Image background = Toolkit.getDefaultToolkit().createImage(
 			//	"Background.png");
 		// this.drawImage(background, 0, 0, null);
-		backgroundImage = new Background(0, 0);
+		backgroundImage = new Background(0, 0,"background.png");
+		backgroundImageSwitch = new Background(1333, 0, "backgroundswitch.png" );
 		
 		ingame = true;
 
@@ -86,6 +88,7 @@ public class Board extends JPanel implements ActionListener {
 
 		if (ingame) {
 			g.drawImage(backgroundImage.getImage(), backgroundImage.getX(), backgroundImage.getY(), this);
+			g.drawImage(backgroundImageSwitch.getImage(), backgroundImageSwitch.getX(), backgroundImageSwitch.getY(), this);
 			drawObjects(g);
 		} else {
 			drawGameOver(g);
@@ -134,7 +137,7 @@ public class Board extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		inGame();
-
+		scrollBackground();
 		updateRoger();
 		updateFireballs();
 		updateAliens();
@@ -142,6 +145,12 @@ public class Board extends JPanel implements ActionListener {
 		checkCollisions();
 
 		repaint();
+	}
+
+	private void scrollBackground() {
+		backgroundImage.move();
+		backgroundImageSwitch.move();
+		
 	}
 
 	private void inGame() {
