@@ -7,17 +7,17 @@ import javax.imageio.ImageIO;
 
 public class Background extends Sprite {
 
-	public Background(int x, int y) {
+	public Background(int x, int y, String resourcesName) {
 		super(x, y);
-		initBackground();
+		initBackground(resourcesName);
 		
 	}
 	
-	private void initBackground() {														
+	private void initBackground(String filename) {														
 		String currentDir = System.getProperty("user.dir");
 		currentDir = currentDir
 				.replace("platform",
-						"applications/roger-runner/src/main/resources/background.png");		
+						"applications/roger-runner/src/main/resources/"+filename);		
 		File backgroundImage=new File(currentDir);
 		try {
 			this.image=ImageIO.read(backgroundImage);
@@ -26,6 +26,16 @@ public class Background extends Sprite {
 			e.printStackTrace();
 		}				
 		getImageDimensions();
+	}
+	
+	
+	public void move() {
+		x=x-2;
+		if(x<=-1331){
+			x=1333;
+		}
+		
+		
 	}
 
 
