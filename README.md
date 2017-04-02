@@ -20,7 +20,7 @@ At the root of the project please run one of these following commands :
 ./bluesnail.sh -i
 ```
 
-* To run the application (if the application, an extension or the platform is not installed, this command will dot it)
+* To run the application (if the application, an extension or the platform is not installed, this command will do it)
 ```bash
 ./bluesnail.sh -r
 ```
@@ -38,6 +38,8 @@ At the root of the project please run one of these following commands :
 ```
 
 * To create an extension of existing application
-```
+```bash
 ./bluesnail.sh -c <extension-name> -p <app-name>
 ```
+
+**Important** : If you create a plugin, some modifications may be ne required in the config.txt file in the platform. For more informations, please refer to the documentation (section "Développer un plugin".
