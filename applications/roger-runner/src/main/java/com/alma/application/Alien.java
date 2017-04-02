@@ -14,7 +14,7 @@ public class Alien extends Sprite {
 		String currentDir = System.getProperty("user.dir");
 		currentDir = currentDir
 				.replace("platform",
-						"applications/roger-runner/src/main/resources/roger1.png");
+						"applications/roger-runner/src/main/resources/monster.png");
 		loadImage(currentDir);
 		getImageDimensions();
 	}

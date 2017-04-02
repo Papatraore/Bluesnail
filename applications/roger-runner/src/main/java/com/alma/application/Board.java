@@ -31,7 +31,8 @@ public class Board extends JPanel implements ActionListener {
 	private final int B_WIDTH = 1000;
 	private final int B_HEIGHT = 500;
 	private final int DELAY = 15;
-        private final int NBR_FIRE = 50;
+    private final int NBR_FIRE = 50;
+    private Background backgroundImage;
           
 	private int[][] pos = new int[NBR_FIRE][NBR_FIRE];
 
@@ -53,9 +54,11 @@ public class Board extends JPanel implements ActionListener {
 
 		addKeyListener(new TAdapter());
 		setFocusable(true);
-		Image background = Toolkit.getDefaultToolkit().createImage(
-				"Background.png");
+		//Image background = Toolkit.getDefaultToolkit().createImage(
+			//	"Background.png");
 		// this.drawImage(background, 0, 0, null);
+		backgroundImage = new Background(0, 0);
+		
 		ingame = true;
 
 		setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
@@ -82,6 +85,7 @@ public class Board extends JPanel implements ActionListener {
 		super.paintComponent(g);
 
 		if (ingame) {
+			g.drawImage(backgroundImage.getImage(), backgroundImage.getX(), backgroundImage.getY(), this);
 			drawObjects(g);
 		} else {
 			drawGameOver(g);

@@ -36,10 +36,25 @@ public class Roger extends Sprite {
 		if (x < 1) {
 			x = 1;
 		}
+				
 
-		if (y < 1) {
-			y = 1;
+		if (y <400 && dy==0) {
+			if(y<396){
+			y=y+4;
+			}else{
+				y=400;
+			}
 		}
+		
+		if(y>400 && dy==0){
+			y=y-2;
+			
+		}
+		
+		if(y>420){
+			y=420;
+		}
+		
 	}
 
 	public void move(int bx, int by) {
@@ -69,15 +84,15 @@ public class Roger extends Sprite {
 		}
 
 		if (key == KeyEvent.VK_LEFT) {
-			dx = -1;
+			dx = -2;
 		}
 
 		if (key == KeyEvent.VK_RIGHT) {
-			dx = 1;
+			dx = 2;
 		}
 
 		if (key == KeyEvent.VK_UP) {
-			dy = -1;
+			dy = -5;
 		}
 
 		if (key == KeyEvent.VK_DOWN) {

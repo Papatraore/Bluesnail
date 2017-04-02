@@ -1,12 +1,19 @@
 package com.alma.application;
 
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -39,6 +46,17 @@ public class App extends JFrame implements IMainPlugin {
 		pack();
 		setTitle("Roger");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//charger l'image d'arrière plan
+		/*
+		BufferedImage bckImage;
+		try {
+			bckImage = ImageIO.read(backgroundImage);
+			setContentPane(new Background(bckImage));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		*/		
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -78,4 +96,18 @@ public class App extends JFrame implements IMainPlugin {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	/*
+	class Background extends JComponent {
+	    private Image image;
+	    public Background(Image image) {
+	        this.image = image;
+	    }
+	    @Override
+	    protected void paintComponent(Graphics g) {
+	        super.paintComponent(g);
+	        g.drawImage(image.getScaledInstance(850, 500, Image.SCALE_SMOOTH), 0, 0, this);
+	    }
+	}
+	*/
 }
