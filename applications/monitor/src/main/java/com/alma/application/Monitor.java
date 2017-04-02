@@ -17,7 +17,8 @@ import com.alma.platform.data.PluginDescriptor;
 import com.alma.platform.data.PluginState;
 
 /**
- * 
+ * This class is used to monitor the plugin of BlueSnail framework. It prints
+ * the available plugin with their status and the call of methods.
  *
  */
 public class Monitor extends JFrame implements IMainPlugin, IMonitor {
@@ -38,6 +39,9 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 	private JTextArea logTextArea;
 	private List<String> logData;
 
+	/**
+	 * Creates an instance of Monitor
+	 */
 	public Monitor() {
 		super("Monitoring");
 	}
@@ -104,6 +108,9 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 		}
 	}
 
+	/*
+	 * Fill the array of data that contains the different state of each plugin.
+	 */
 	private void fillDataState() {
 		int i = 0;
 		for (Map.Entry<PluginDescriptor, PluginState> entry : pluginsState.entrySet()) {
@@ -114,6 +121,9 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 		}
 	}
 
+	/*
+	 * Remove this monitor from the list of monitor of the platform.
+	 */
 	private void removeMonitor() {
 		platform.removeMonitor(this);
 	}
