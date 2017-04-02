@@ -205,8 +205,8 @@ public class Platform {
 	/**
 	 * Returns an instance of a plugin.
 	 * 
-	 * @param className
-	 *            The name of the plugin.
+	 * @param plugin
+	 *            The plugin description that have to be instanced.
 	 * @return
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException

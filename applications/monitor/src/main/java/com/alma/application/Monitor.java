@@ -45,8 +45,10 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 	@Override
 	public void update() {
 		fillDataState();
-		printLog();
-		
+
+		if (!logData.isEmpty())
+			logTextArea.append(logData.get(logData.size() - 1) + "\n");
+
 		repaint();
 		revalidate();
 	}
@@ -92,9 +94,7 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 			logTextArea = new JTextArea();
 			logTextArea.setEditable(false);
 			logScrollPanel = new JScrollPane(logTextArea);
-			
-			printLog();
-			
+
 			add(stateScrollPanel);
 			add(logScrollPanel);
 			setVisible(true);
@@ -111,12 +111,6 @@ public class Monitor extends JFrame implements IMainPlugin, IMonitor {
 			stateData[i][0] = entry.getKey().getPluginName();
 			stateData[i][1] = entry.getValue();
 			++i;
-		}
-	}
-
-	private void printLog() {
-		for (String log : logData) {
-			logTextArea.append(log + "\n");
 		}
 	}
 
