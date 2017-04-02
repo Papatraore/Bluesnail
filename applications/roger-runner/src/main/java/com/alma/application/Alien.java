@@ -2,7 +2,7 @@ package com.alma.application;
 
 public class Alien extends Sprite {
 
-	private final int INITIAL_X = 400;
+	private final int INITIAL_X = 1000;
 
 	public Alien(int x, int y) {
 		super(x, y);

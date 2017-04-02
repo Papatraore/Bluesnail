@@ -1,17 +1,25 @@
 package com.alma.application;
 
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
 
 public class Roger extends Sprite {
 
 	private int dx;
 	private int dy;
 	private ArrayList<FireBall> fireballs;
+	protected Image image1;
+	protected Image image2;
+	protected Image image3;
+	private int swapAnimation;
+	
 
 	public Roger(int x, int y) {
 		super(x, y);
-
+		
 		initRoger();
 	}
 
@@ -19,11 +27,26 @@ public class Roger extends Sprite {
 		String currentDir = System.getProperty("user.dir");
 		currentDir = currentDir
 				.replace("platform",
-						"applications/roger-runner/src/main/resources/running_phase0.png");
-		
-		System.out.println(currentDir);
+						"applications/roger-runner/src/main/resources/running_phase0.png");				
 		loadImage(currentDir);
-
+		currentDir = System.getProperty("user.dir");
+		currentDir = currentDir
+				.replace("platform",
+						"applications/roger-runner/src/main/resources/running_phase0.png");				
+		loadImage1(currentDir);
+		
+		currentDir = System.getProperty("user.dir");		
+		currentDir = currentDir
+				.replace("platform",
+						"applications/roger-runner/src/main/resources/running_phase1.png");				
+		loadImage2(currentDir);
+		currentDir = System.getProperty("user.dir");
+		currentDir = currentDir
+				.replace("platform",
+						"applications/roger-runner/src/main/resources/running_phase2.png");				
+		loadImage3(currentDir);
+		swapAnimation=0;
+		
 		fireballs = new ArrayList<>();
 		getImageDimensions();
 	}
@@ -54,6 +77,32 @@ public class Roger extends Sprite {
 		if(y>420){
 			y=420;
 		}
+		
+		animate();
+		
+	}
+
+	private void animate() {
+		this.swapAnimation++;
+		switch (this.swapAnimation){
+		case 8:
+			image=image1;			
+			break;
+			
+		case 16:
+			image=image2;			
+			break;
+			
+		case 24:
+			image=image3;			
+			break;
+					
+		
+		}		
+		if(swapAnimation>=24){
+			swapAnimation=0;			
+		}
+		
 		
 	}
 
@@ -124,4 +173,22 @@ public class Roger extends Sprite {
 			dy = 0;
 		}
 	}
+	
+	protected void loadImage1(String imageName) {
+		ImageIcon ii = new ImageIcon(imageName);
+		image1 = ii.getImage();
+	}
+	
+	protected void loadImage2(String imageName) {
+		ImageIcon ii = new ImageIcon(imageName);
+		image2 = ii.getImage();
+	}
+	
+	
+	protected void loadImage3(String imageName) {
+		ImageIcon ii = new ImageIcon(imageName);
+		image3 = ii.getImage();
+	}
+	
+	
 }

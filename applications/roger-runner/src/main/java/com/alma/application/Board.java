@@ -23,6 +23,7 @@ import javax.swing.Timer;
 public class Board extends JPanel implements ActionListener {
 
 	private Timer timer;
+	private long startTime;
 	private Roger roger;
 	private ArrayList<Alien> aliens;
 	private boolean ingame;
@@ -32,13 +33,15 @@ public class Board extends JPanel implements ActionListener {
 	private final int B_HEIGHT = 500;
 	private final int DELAY = 15;
     private final int NBR_FIRE = 50;
+    private final int GenerationDelay = 50;
+    int generationOffset;
     private Background backgroundImage;
     private Background backgroundImageSwitch;
-          
+    private Random rdm;      
 	private int[][] pos = new int[NBR_FIRE][NBR_FIRE];
 
 	void initPos() {
-		Random rdm = new Random();
+		rdm = new Random();
 		for (int i = 0; i < NBR_FIRE; i++) {
 			for (int j = 0; j < NBR_FIRE; j++) {
 				this.pos[i][j] = rdm.nextInt(1000);
@@ -71,6 +74,8 @@ public class Board extends JPanel implements ActionListener {
 
 		timer = new Timer(DELAY, this);
 		timer.start();
+		generationOffset=0;
+		startTime = System.currentTimeMillis();
 	}
 
 	public void initAliens() {
@@ -78,7 +83,7 @@ public class Board extends JPanel implements ActionListener {
 
 		for (int[] p : pos) {
                         if( (p[1]< 450) &&(p[1]> 50))
-			aliens.add(new Alien(p[0]+500, p[1]));
+			aliens.add(new Alien(p[0]+1000, p[1]));
 		}
 	}
 
@@ -119,7 +124,8 @@ public class Board extends JPanel implements ActionListener {
 		}
 
 		g.setColor(Color.WHITE);
-		g.drawString("Aliens left: " + aliens.size(), 5, 15);
+		//g.drawString("Monsters left: " + aliens.size(), 5, 15); inutile pour une generation infini
+		g.drawString("Time elapsed: " + (System.currentTimeMillis()-startTime)/1000, 5, 15); 
 	}
 
 	private void drawGameOver(Graphics g) {
@@ -185,13 +191,13 @@ public class Board extends JPanel implements ActionListener {
 	}
 
 	private void updateAliens() {
-
-		if (aliens.isEmpty()) {
+		/*
+		if (aliens.isEmpty()) {//plus besoin vu que la generation des monstres sera infini
 
 			ingame = false;
 			return;
 		}
-
+		*/						
 		for (int i = 0; i < aliens.size(); i++) {
 
 			Alien a = aliens.get(i);
@@ -201,6 +207,16 @@ public class Board extends JPanel implements ActionListener {
 				aliens.remove(i);
 			}
 		}
+		generationOffset++;
+		if(generationOffset>GenerationDelay){
+			Random rdm = new Random();
+			int p=rdm.nextInt(NBR_FIRE);
+				if( (pos[p][1]< 450) &&(pos[p][1]> 50)){
+					aliens.add(new Alien(pos[p][0]+1000, pos[p][1]));
+					generationOffset=0;					
+			}
+		}
+
 	}
 
 	public void checkCollisions() {
