@@ -13,6 +13,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -167,6 +168,12 @@ public class Board extends JPanel implements ActionListener {
 		g.setColor(Color.red);
 		g.setFont(small);
 		g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2, B_HEIGHT / 2);
+		
+		highScore.DisplayNameWindow();
+		
+		String scoreLine=new String("");
+		HashMap<String,Integer> listHighScoretemp = new HashMap<String,Integer>();
+		listHighScoretemp = highScore.getListHighScore();
 	}
 
 	@Override
