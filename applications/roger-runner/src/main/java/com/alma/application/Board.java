@@ -5,20 +5,25 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import com.alma.platform.control.Platform;
+import com.alma.platform.data.PluginDescriptor;
 
 public class Board extends JPanel implements ActionListener {
 
@@ -32,13 +37,15 @@ public class Board extends JPanel implements ActionListener {
 	private final int B_WIDTH = 1000;
 	private final int B_HEIGHT = 500;
 	private final int DELAY = 15;
-    private final int NBR_FIRE = 50;
-    private final int GenerationDelay = 50;
-    int generationOffset;
-    private Background backgroundImage;
-    private Background backgroundImageSwitch;
-    private Random rdm;      
+	private final int NBR_FIRE = 50;
+	private final int GenerationDelay = 50;
+	int generationOffset;
+	private Background backgroundImage;
+	private Background backgroundImageSwitch;
+	private Random rdm;
 	private int[][] pos = new int[NBR_FIRE][NBR_FIRE];
+	private IHighScore highScore;
+	private Integer scoretemp;
 
 	void initPos() {
 		rdm = new Random();
@@ -58,12 +65,12 @@ public class Board extends JPanel implements ActionListener {
 
 		addKeyListener(new TAdapter());
 		setFocusable(true);
-		//Image background = Toolkit.getDefaultToolkit().createImage(
-			//	"Background.png");
+		// Image background = Toolkit.getDefaultToolkit().createImage(
+		// "Background.png");
 		// this.drawImage(background, 0, 0, null);
-		backgroundImage = new Background(0, 0,"background.png");
-		backgroundImageSwitch = new Background(1333, 0, "backgroundswitch.png" );
-		
+		backgroundImage = new Background(0, 0, "background.png");
+		backgroundImageSwitch = new Background(1333, 0, "backgroundswitch.png");
+
 		ingame = true;
 
 		setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
@@ -74,16 +81,33 @@ public class Board extends JPanel implements ActionListener {
 
 		timer = new Timer(DELAY, this);
 		timer.start();
-		generationOffset=0;
+		generationOffset = 0;
 		startTime = System.currentTimeMillis();
+
+		scoretemp=0;
+		// to get an instance of IHighScore
+		try {
+			List<PluginDescriptor> listHighScore = new ArrayList<PluginDescriptor>();
+			listHighScore = Platform.getInstance().getListPlugin(IHighScore.class);
+			
+			System.out.println( "LISTHIGHSCORE :"+listHighScore.get(0).toString());
+			if (!listHighScore.isEmpty())
+				highScore = null;
+				highScore = (IHighScore) Platform.getInstance().getPluginInstance(listHighScore.get(0));
+
+		} catch (NoSuchElementException | IllegalArgumentException
+				| IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void initAliens() {
 		aliens = new ArrayList<>();
 
 		for (int[] p : pos) {
-                        if( (p[1]< 450) &&(p[1]> 50))
-			aliens.add(new Alien(p[0]+1000, p[1]));
+			if ((p[1] < 450) && (p[1] > 50))
+				aliens.add(new Alien(p[0] + 1000, p[1]));
 		}
 	}
 
@@ -92,8 +116,11 @@ public class Board extends JPanel implements ActionListener {
 		super.paintComponent(g);
 
 		if (ingame) {
-			g.drawImage(backgroundImage.getImage(), backgroundImage.getX(), backgroundImage.getY(), this);
-			g.drawImage(backgroundImageSwitch.getImage(), backgroundImageSwitch.getX(), backgroundImageSwitch.getY(), this);
+			g.drawImage(backgroundImage.getImage(), backgroundImage.getX(),
+					backgroundImage.getY(), this);
+			g.drawImage(backgroundImageSwitch.getImage(),
+					backgroundImageSwitch.getX(), backgroundImageSwitch.getY(),
+					this);
 			drawObjects(g);
 		} else {
 			drawGameOver(g);
@@ -124,8 +151,11 @@ public class Board extends JPanel implements ActionListener {
 		}
 
 		g.setColor(Color.WHITE);
-		//g.drawString("Monsters left: " + aliens.size(), 5, 15); inutile pour une generation infini
-		g.drawString("Time elapsed: " + (System.currentTimeMillis()-startTime)/1000, 5, 15); 
+		// g.drawString("Monsters left: " + aliens.size(), 5, 15); inutile pour
+		// une generation infini
+		g.drawString("Time elapsed: "
+				+ (System.currentTimeMillis() - startTime) / 1000, 5, 15);
+		g.drawString("score : "+scoretemp, 5, 30); // TODO appeler score
 	}
 
 	private void drawGameOver(Graphics g) {
@@ -156,7 +186,7 @@ public class Board extends JPanel implements ActionListener {
 	private void scrollBackground() {
 		backgroundImage.move();
 		backgroundImageSwitch.move();
-		
+
 	}
 
 	private void inGame() {
@@ -192,12 +222,11 @@ public class Board extends JPanel implements ActionListener {
 
 	private void updateAliens() {
 		/*
-		if (aliens.isEmpty()) {//plus besoin vu que la generation des monstres sera infini
-
-			ingame = false;
-			return;
-		}
-		*/						
+		 * if (aliens.isEmpty()) {//plus besoin vu que la generation des
+		 * monstres sera infini
+		 * 
+		 * ingame = false; return; }
+		 */
 		for (int i = 0; i < aliens.size(); i++) {
 
 			Alien a = aliens.get(i);
@@ -208,12 +237,12 @@ public class Board extends JPanel implements ActionListener {
 			}
 		}
 		generationOffset++;
-		if(generationOffset>GenerationDelay){
+		if (generationOffset > GenerationDelay) {
 			Random rdm = new Random();
-			int p=rdm.nextInt(NBR_FIRE);
-				if( (pos[p][1]< 450) &&(pos[p][1]> 50)){
-					aliens.add(new Alien(pos[p][0]+1000, pos[p][1]));
-					generationOffset=0;					
+			int p = rdm.nextInt(NBR_FIRE);
+			if ((pos[p][1] < 450) && (pos[p][1] > 50)) {
+				aliens.add(new Alien(pos[p][0] + 1000, pos[p][1]));
+				generationOffset = 0;
 			}
 		}
 
@@ -246,6 +275,8 @@ public class Board extends JPanel implements ActionListener {
 				if (r1.intersects(r2)) {
 					m.setVisible(false);
 					alien.setVisible(false);
+					this.scoretemp = highScore.incrementScore();
+					
 				}
 			}
 		}
