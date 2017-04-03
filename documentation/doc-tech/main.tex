@@ -1,0 +1,70 @@
+\documentclass[11pt]{article}
+
+% ENCODAGE CARACTERES
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[frenchb]{babel}
+
+% MISE EN FORME
+\usepackage[left=3cm,right=3cm,top=3cm,bottom=3cm]{geometry}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{pifont}
+\usepackage{placeins}
+\usepackage{listings}
+\usepackage{color}
+
+\hypersetup{linkcolor=blue}
+
+% Pour les listes à puces
+\frenchbsetup{StandardLists=true} 
+\setitemize[0]{font=\color{black},label=\ding{227},itemsep=0pt}
+
+\title{BlueSnail - Documentation}
+\author{Alexis Bonnin - Salma ... (écrivez vos noms)}
+\date{Avril 2017}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    Cette documentation s'adresse d'une part aux utilisateurs souhaitant utiliser l'application \textit{roger-runner} et d'autre part, aux développeurs qui veulent créer de nouveaux plugin pour cette application. Vous trouverez également dans cette documentation une description de la plate-forme \textit{BlueSnail}.
+\end{abstract}
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+\subsection{Présentation du projet}
+    L'application \textit{roger-runner} est un jeu de d'arcade fonctionnant via la plate-forme \textit{BlueSnail}. Ce jeu consiste à déplacer un personnage tout en évitant les différents obstacles. Il se joue au clavier et plus précisément grâce aux touches directionnelles ainsi que la touche "barre espace".
+    
+    Cette documentation décrit comment installer la plate-forme et les différents plugin et comment développer un nouveau plugin. Elle présente également une description de la plate-forme \textit{BlueSnail}.
+    
+    Pour fonctionner, ce projet nécessite :
+    \begin{itemize}
+        \item Linux
+        \item Java (version 1.7 ou plus)
+        \item Maven (version 3)
+    \end{itemize}
+    
+\subsection{Vocabulaire}
+\label{subsec:vocabulaire}
+
+    Pour éviter toute confusion, voici quelques notions importantes à savoir :
+    \begin{itemize}
+        \item \textbf{plate-forme} : La plate-forme est le point d'entrée du programme. Celle-ci est chargée de gérer les différents plugin ainsi que de lancer ceux en mode "autorun". Tout besoin en terme d'extension doit être formulé à cette plate-forme.
+        
+        \item \textbf{application} : On distingue deux types de plugin : les \textit{applications} et les \textit{extensions}. Les applications sont des plugin en mode "autorun", c'est-à-dire qu'ils ne dépendent pas de d'autre plugin et sont exécutés dès le démarrage de la plate-forme.
+        
+        \item \textbf{extension} : les extensions sont des plugin dépendant d'une application. Ils ne seront exécutés par la plate-forme que lorsqu'un besoin sera formulé par une application.   
+    \end{itemize}
+
+\input{1-installation}
+\input{2-dev_plugin}
+\input{3-descr_plateforme}
+
+\end{document}

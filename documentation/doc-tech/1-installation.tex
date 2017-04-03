@@ -1,0 +1,45 @@
+\section{Installer et utiliser l'application}
+
+\subsection{Installation}
+    Tout d'abord, le projet est disponible sur GitHub à l'adresse suivante :  \url{https://github.com/Asteip/Bluesnail.git}. Pour installer le projet, veuillez exécuter les commandes suivantes dans un terminal :
+    
+    \begin{itemize}
+        \item Cloner le dépôt :
+        \begin{lstlisting}[language=bash]
+        git clone https://github.com/Asteip/Bluesnail.git
+        \end{lstlisting}
+        
+        \item Installer la plate-forme ainsi que tous les plugin (à la racine du projet) :
+        \begin{lstlisting}[language=bash]
+        ./bluesnail.sh -i
+        \end{lstlisting}
+        
+        \item Afficher l'aide :
+        \begin{lstlisting}[language=bash]
+        ./bluesnail.sh -h
+        \end{lstlisting}
+    \end{itemize}
+    
+\subsection{Désinstallation}
+    Pour désinstaller l'application, il suffit de supprimer le répertoire "Bluesnail" contenant le projet.
+    
+\subsection{Lancer le programme}
+    Pour exécuter l'application, veuillez lancer la commande qui suit dans un terminal :
+
+    \begin{itemize}
+        \item Exécuter les plugin autorun :
+        \begin{lstlisting}[language=bash]
+        ./bluesnail.sh -r
+        \end{lstlisting}
+    \end{itemize}
+
+    Ceci aura pour effet de lancer toutes les applications disponibles, c'est-à-dire tous les plugin en mode "autorun". Si une application, une extension ou la plate-forme n'est pas installée alors celle-ci sera automatiquement installée avant l'exécution.
+    
+\subsection{Comment jouer à Roger-runner ?}
+    \paragraph{But du jeu}
+    L'objectif de Roger-runner est d'éviter les aliens apparaissant sur la carte. Le jeu se termine si Roger se fait tuer par un alien.
+    
+    \paragraph{Commandes}
+    Tout d'abord, pour déplacer Roger, il faut utiliser les touches directionnelles : les flèches gauche et droite permettent de déplacer le personnage à gauche et à droite de l'écran. La flèche du haut permet de sauter. Enfin, la touche "barre espace" permet d'envoyer des projectiles sur les ennemis.
+    
+    
