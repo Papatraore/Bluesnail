@@ -83,10 +83,13 @@
     
 \subsection{Utiliser l'API de la plate-forme}
 
-    La plate-forme (cf. section \ref{sec:desc_plateforme}) offre plusieurs méthodes utilisables par les plugin. Ces méthodes sont détaillées dans la javadoc de la plate-forme. Les principales méthode de l'API sont :
+    La plate-forme (cf. section \ref{sec:desc_plateforme}) offre plusieurs méthodes utilisables par les plugin. Ces méthodes sont détaillées dans la java-doc de la plate-forme (dossier documentation/doc-platform/). Les principales méthodes de l'API sont :
     
     \begin{itemize}
-        \item 
+        \item getInstance() : Retourner l'instance unique de la plate-forme.
+        \item getListPlugin() : Retourne la liste de tous les plugin disponibles.
+        \item getListPlugin(java.lang.Class<?> need) : Retourne la liste des plugin disponibles correspondant au besoin (need). Le besoin est exprimé via une interface que doit implémenter la classe principale du plugin.
+        \item getPluginInstance(PluginDescriptor plugin) : Retourne une instance du plugin passé en paramètre.
     \end{itemize}
 
 \subsection{Compiler un plugin}
