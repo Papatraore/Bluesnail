@@ -38,19 +38,19 @@ public class App extends JFrame implements IMainPlugin {
 		mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		mainPanel.setLayout(new GridLayout(2, 1));
 		// on init le panel principal
-		initMainPanel();
 		contentPanel.add(mainPanel);
 
 		// on ajoute le main pannel et on configure le reste de la frame
 		add(new Board());
 		pack();
 		setTitle("Roger");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 
-	private void initMainPanel() {
+	@Override
+	public void run() {
 
 		JMenuBar menubar = new JMenuBar();
 		JMenu file = new JMenu("File");
@@ -71,7 +71,7 @@ public class App extends JFrame implements IMainPlugin {
 		setJMenuBar(menubar);
 		mainPanel.add(new Board());
 		setSize(new Dimension(1000, 500));
-                setResizable(false);
+		setResizable(false);
 		pack();
 
 		setTitle("Collision");
@@ -80,10 +80,4 @@ public class App extends JFrame implements IMainPlugin {
 
 	}
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-		
 }
