@@ -92,7 +92,7 @@ public class Board extends JPanel implements ActionListener {
 			List<PluginDescriptor> listHighScore = new ArrayList<PluginDescriptor>();
 			listHighScore = Platform.getInstance().getListPlugin(IHighScore.class);
 			
-			System.out.println( "LISTHIGHSCORE :"+listHighScore.get(0).toString());
+			
 			if (!listHighScore.isEmpty())
 				highScore = null;
 				highScore = (IHighScore) Platform.getInstance().getPluginInstance(listHighScore.get(0));

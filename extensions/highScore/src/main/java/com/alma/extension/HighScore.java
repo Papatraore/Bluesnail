@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import com.alma.application.IHighScore;
-import com.alma.platform.control.Platform;
 
 /**
  * Extension to manage the HighScore
